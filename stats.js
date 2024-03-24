@@ -55,37 +55,34 @@ function initializeRollingMechanics() {
     });
 }
 
-
 function initializeClassSelection() {
     const dropdown = document.getElementById('classDropdown');
-    const classLabel = document.getElementById('classLabel'); // Assuming this is the text area for class name.
+    const classLabelInput = document.getElementById('classLabel'); // Now targeting a text input
     const classDescription = document.getElementById('classDescription');
     const classAbility = document.getElementById('classAbilities');
 
-    // Ensure the selected class persists across page reloads using localStorage
+    // Loading the saved class selection from localStorage
     const savedClass = localStorage.getItem('selectedClass');
-    if (savedClass && dropdown.querySelector(`option[value="${savedClass}"]`)) {
+    if(savedClass && dropdown.querySelector(`option[value="${savedClass}"]`)) {
         dropdown.value = savedClass;
     }
 
     dropdown.addEventListener('change', function() {
-        const selectedClass = this.options[this.selectedIndex].text; // Fetching the text, not the value.
-        localStorage.setItem('selectedClass', this.value); // Saving the selected class's value for persistence.
-        classLabel.value = selectedClass; // Updating the classLabel text area with the selected class name.
-        updateClassInfo(this.value, classDescription, classAbility); // Passing value to update description and abilities.
+        const selectedClass = this.options[this.selectedIndex].text; // Using option text for display
+        localStorage.setItem('selectedClass', this.value); // Storing the selected class value for persistence
+        classLabelInput.value = selectedClass; // Updating the text input to display the selected class name
+        updateClassInfo(this.value, classDescription, classAbility);
     });
 
-    // Trigger update on page load for the current or saved selection.
-    if (dropdown.value) { // If there's already a selection (including a saved one), use it.
-        dropdown.dispatchEvent(new Event('change'));
-    }
+    // Manually trigger the change event on page load to update UI elements based on the current or saved selection
+    dropdown.dispatchEvent(new Event('change'));
 }
 
 function updateClassInfo(className, descInput, abilitiesInput) {
     const classInfo = getClassInfo(className);
     if (classInfo) {
-        descInput.value = classInfo.description; // Updating the class description.
-        abilitiesInput.value = classInfo.abilities.join('\n'); // Joining abilities with newline for the textarea.
+        descInput.value = classInfo.description;
+        abilitiesInput.value = classInfo.abilities.join('\n');
     } else {
         descInput.value = 'Select a class to see the description.';
         abilitiesInput.value = 'Select a class to see the abilities.';
