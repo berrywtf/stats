@@ -59,7 +59,7 @@ function initializeClassSelection() {
     const dropdown = document.getElementById('classDropdown');
     const classLabelInput = document.getElementById('classLabel'); // Now targeting a text input
     const classDescription = document.getElementById('classDescription');
-    const classAbility = document.getElementById('classAbilities');
+    const classAbility = document.getElementById('classAbility');
 
     // Loading the saved class selection from localStorage
     const savedClass = localStorage.getItem('selectedClass');
