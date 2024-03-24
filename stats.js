@@ -1,25 +1,7 @@
 document.addEventListener('DOMContentLoaded', function() {
     initializeRollingMechanics();
-    initializeClassSelection();
+    initializeClassSelection(); // Renamed to match the function definition.
 });
-
-// Initialize rolling mechanics for character stats
-function initializeRollingMechanics() {
-    document.getElementById('reroll-button').addEventListener('click', function() {
-        rollCount--;
-        if (rollCount >= 0) {
-            resetStatsAndShowButtons();
-            document.getElementById('stat-message').textContent = `Stats reset. Roll each stat again. ${rollCount} rerolls left.`;
-        }
-    });
-
-    const stats = ['strength', 'dexterity', 'mind', 'charisma'];
-    stats.forEach(stat => {
-        document.getElementById(`${stat}-button`).addEventListener('click', function() {
-            animateRoll(`${stat}-stat`, `${stat}-modifier`, `${stat}-button`);
-        });
-    });
-}
 
 let rollCount = 3;
 
@@ -66,74 +48,78 @@ function resetStatsAndShowButtons() {
     });
 }
 
-// Initialize class selection and update class info based on selection
 function initializeClassSelection() {
     const dropdown = document.getElementById('classDropdown');
+    const descInput = document.getElementById('classDesc');
+    const abilitiesInput = document.getElementById('classAbilities');
+
     dropdown.addEventListener('change', function() {
-        updateClassInfo(this.value);
+        const selectedClass = this.value;
+        updateClassInfo(selectedClass, descInput, abilitiesInput);
     });
 
-    // Optionally, initialize the class info if a class is already selected on page load
-    if (dropdown.value) {
-        updateClassInfo(dropdown.value);
+    // Initial update for default selection, if applicable.
+    const initialClass = dropdown.options[dropdown.selectedIndex]?.value;
+    if (initialClass) {
+        updateClassInfo(initialClass, descInput, abilitiesInput);
     }
 }
 
-function updateClassInfo(className) {
-    const classDescInput = document.getElementById('classDesc');
-    const classAbilitiesInput = document.getElementById('classAbilities');
-    const classInfo = classesData[className];
+function updateClassInfo(className, descInput, abilitiesInput) {
+    const classInfo = getClassInfo(className);
 
     if (classInfo) {
-        classDescInput.value = classInfo.description;
-        classAbilitiesInput.value = classInfo.abilities.map(a => `${a.name}: ${a.ability_description}`).join('; ');
+        descInput.value = classInfo.description;
+        abilitiesInput.value = classInfo.abilities.join('; ');
     } else {
-        classDescInput.value = '';
-        classAbilitiesInput.value = '';
+        descInput.value = 'Select a class to see the description.';
+        abilitiesInput.value = 'Select a class to see the abilities.';
     }
 }
 
-// Class information
-const classesData = {
-    // Populate with your classesData
-    "Juicer": {
-        "description": "Light Armor. Experts in extracting essence, adept at getting information or crafting concoctions.",
-        "abilities": [
-            {"name": "Essence Extraction", "ability_description": "Bonus on essence extraction rolls"},
-            {"name": "Vitality Surge", "ability_description": "Create a healing elixir"}
-        ]
-    },
-    "Peeler": {
-        "description": "Medium Armor. Specialize in uncovering hidden layers and secrets, working behind the scenes.",
-        "abilities": [
-            {"name": "Stealth Unveil", "ability_description": "Bonus on stealth rolls"},
-            {"name": "Quick Peel", "ability_description": "Swift attack with bonus to hit"}
-        ]
-    },
-    "Slicer": {
-        "description": "Light Armor. Shields. Quick and precise warriors, preferring agility and sharp tactics over brute strength.",
-        "abilities": [
-            {"name": "Razor Edge", "ability_description": "Bonus on attack rolls with bladed weapons"},
-            {"name": "Swift Strike", "ability_description": "Additional attack after downing an opponent"}
-        ]
-    },
-    "Ripener": {
-        "description": "Medium Armor. Masters of growth and nurturing, seen as healers and mentors.",
-        "abilities": [
-            {"name": "Growth Infusion", "ability_description": "Enhance plant growth or healing"}
-        ]
-    },
-    "Harvester": {
-        "description": "Heavy Armor. Shield. Strong and skilled in gathering resources and information, adept at acquiring what is needed.",
-        "abilities": [
-            {"name": "Resourceful Gathering", "ability_description": "Bonus on harvesting/gathering rolls"},
-            {"name": "Hardened Peel", "ability_description": "Bonus to armor class."}
-        ]
-    },
-    "Seedcaster": {
-        "description": "Light Armor. Visionary and strategic, planting the seeds of future success with deep insight and foresight.",
-        "abilities": [
-            {"name": "Seed Manipulation", "ability_description": "Control plant growth"}
-        ]
-    }
-};
+function getClassInfo(className) {
+    const classesData = {
+        "Juicer": {
+            "description": "Light Armor. Experts in extracting essence, adept at getting information or crafting concoctions.",
+            "abilities": [
+                "Essence Extraction: Bonus on essence extraction rolls",
+                "Vitality Surge: Create a healing elixir"
+            ]
+        },
+        "Peeler": {
+            "description": "Medium Armor. Specialize in uncovering hidden layers and secrets, working behind the scenes.",
+            "abilities": [
+                "Stealth Unveil: Bonus on stealth rolls",
+                "Quick Peel: Swift attack with bonus to hit"
+            ]
+        },
+        "Slicer": {
+            "description": "Light Armor. Shields. Quick and precise warriors, preferring agility and sharp tactics over brute strength.",
+            "abilities": [
+                "Razor Edge: Bonus on attack rolls with bladed weapons",
+                "Swift Strike: Additional attack after downing an opponent"
+            ]
+        },
+        "Ripener": {
+            "description": "Medium Armor. Masters of growth and nurturing, seen as healers and mentors.",
+            "abilities": [
+                "Growth Infusion: Enhance plant growth or healing"
+            ]
+        },
+        "Harvester": {
+            "description": "Heavy Armor. Shield. Strong and skilled in gathering resources and information, adept at acquiring what is needed.",
+            "abilities": [
+                "Resourceful Gathering: Bonus on harvesting/gathering rolls",
+                "Hardened Peel: Bonus to armor class"
+            ]
+        },
+        "Seedcaster": {
+            "description": "Light Armor. Visionary and strategic, planting the seeds of future success with deep insight and foresight.",
+            "abilities": [
+                "Seed Manipulation: Control plant growth"
+            ]
+        }
+    };
+
+    return classesData[className] || null;
+}
