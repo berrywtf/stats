@@ -157,36 +157,34 @@ function initializeClassSelection() {
     
         function updateClassDetails(className) {
             const classInfo = classesData[className];
-            if (!classInfo) return; // Guard clause for undefined classInfo
-            
-            // Update UI with class description and abilities
-            document.getElementById('classDesc').textContent = classInfo.description;
-            const abilitiesList = document.getElementById('classAbilities');
-            abilitiesList.innerHTML = ''; // Clear existing abilities list
-            classInfo.abilities.forEach(ability => {
-                const li = document.createElement('li');
-                li.textContent = `${ability.name}: ${ability.ability_description}`;
-                abilitiesList.appendChild(li);
-            });
-    
-            // Save the current selection along with its details to localStorage
-            localStorage.setItem('selectedClass', className);
-            localStorage.setItem('selectedClassDesc', classInfo.description);
-            localStorage.setItem('selectedClassAbilities', JSON.stringify(classInfo.abilities));
+            if (classInfo) {
+                // Update UI with class description and abilities
+                document.getElementById('classDesc').textContent = classInfo.description;
+                const abilitiesList = document.getElementById('classAbilities');
+                abilitiesList.innerHTML = ''; // Clear existing abilities list
+                classInfo.abilities.forEach(ability => {
+                    const li = document.createElement('li');
+                    li.textContent = `${ability.name}: ${ability.ability_description}`;
+                    abilitiesList.appendChild(li);
+                });
+            } else {
+                // No information available
+                document.getElementById('classDesc').textContent = 'No information available.';
+                document.getElementById('classAbilities').innerHTML = '';
+            }
         }
     
         populateDropdown();
     
-        // Attempt to retrieve the saved selection from localStorage
-        const savedClassSelection = localStorage.getItem('selectedClass');
-        if (savedClassSelection && classesData[savedClassSelection]) {
-            document.getElementById('classDropdown').value = savedClassSelection;
-            updateClassDetails(savedClassSelection);
+        // Check #classLabel content on page load
+        const classLabelContent = document.getElementById('classLabel').textContent;
+        if (classLabelContent && classLabelContent !== 'Description' && classesData[classLabelContent]) {
+            document.getElementById('classDropdown').value = classLabelContent;
+            updateClassDetails(classLabelContent);
         } else {
-            // If there's no saved selection, initialize with the first class
-            const firstClassName = Object.keys(classesData)[0];
-            document.getElementById('classDropdown').value = firstClassName;
-            updateClassDetails(firstClassName);
+            // Handle case where #classLabel says 'Description' or doesn't match
+            document.getElementById('classDesc').textContent = 'No information available.';
+            document.getElementById('classAbilities').innerHTML = '';
         }
     
         document.getElementById('classDropdown').addEventListener('change', function() {
