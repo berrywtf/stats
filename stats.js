@@ -145,55 +145,48 @@ function initializeClassSelection() {
            
         };
     
-        
-            function updateClassDetailsBasedOnLabel() {
-                const classLabel = document.getElementById('classLabel').textContent;
-                const classInfo = classesData[classLabel];
-        
-                if (classLabel && classLabel !== 'Description' && classInfo) {
-                    // Found a matching class, update the details
-                    document.getElementById('classDesc').textContent = classInfo.description;
-                    const abilitiesList = document.getElementById('classAbilities');
-                    abilitiesList.innerHTML = ''; // Clear existing list
-                    classInfo.abilities.forEach(ability => {
-                        const li = document.createElement('li');
-                        li.textContent = `${ability.name}: ${ability.ability_description}`;
-                        abilitiesList.appendChild(li);
-                    });
-                } else {
-                    // If 'Description' or no matching class, show placeholder text
-                    document.getElementById('classDesc').textContent = 'No information available.';
-                    document.getElementById('classAbilities').innerHTML = '';
-                }
-            }
-        
-            // No need to alter dropdown based on classLabel, but you might still want to populate it.
-            function populateDropdown() {
-                const dropdown = document.getElementById('classDropdown');
-                Object.keys(classesData).forEach(className => {
-                    const option = document.createElement('option');
-                    option.value = className;
-                    option.textContent = className;
-                    dropdown.appendChild(option);
+        function updateClassDetailsBasedOnLabel() {
+            const classLabel = document.getElementById('classLabel').textContent;
+            const classInfo = classesData[classLabel];
+    
+            if (classLabel && classLabel !== 'Description' && classInfo) {
+                // Matching class found, update details
+                document.getElementById('classDesc').textContent = classInfo.description;
+                const abilitiesList = document.getElementById('classAbilities');
+                abilitiesList.innerHTML = ''; // Clear existing list
+                classInfo.abilities.forEach(ability => {
+                    const li = document.createElement('li');
+                    li.textContent = `${ability.name}: ${ability.ability_description}`;
+                    abilitiesList.appendChild(li);
                 });
+            } else {
+                // 'Description' or no matching class, show placeholder text
+                document.getElementById('classDesc').textContent = 'No information available.';
+                document.getElementById('classAbilities').innerHTML = '';
             }
-        
-            populateDropdown();
-            updateClassDetailsBasedOnLabel(); // Use classLabel to update info on page load
-        
-            // If you still need to handle dropdown changes:
-            document.getElementById('classDropdown').addEventListener('change', function() {
-                // Assuming you want to update the class details when the dropdown changes.
-                const selectedClassName = this.value;
-                const classInfo = classesData[selectedClassName];
-                if (classInfo) {
-                    document.getElementById('classLabel').textContent = selectedClassName;
-                    updateClassDetailsBasedOnLabel(); // This will now use the updated classLabel
-                }
+        }
+    
+        function populateDropdown() {
+            const dropdown = document.getElementById('classDropdown');
+            Object.keys(classesData).forEach(className => {
+                const option = document.createElement('option');
+                option.value = className;
+                option.textContent = className;
+                dropdown.appendChild(option);
             });
         }
-        
-        document.addEventListener('DOMContentLoaded', function() {
-            initializeClassSelection();
-            initializeRollingMechanics(); 
+    
+        populateDropdown();
+        updateClassDetailsBasedOnLabel(); // Use classLabel to update info
+    
+        document.getElementById('classDropdown').addEventListener('change', function() {
+            const selectedClassName = this.value;
+            document.getElementById('classLabel').textContent = selectedClassName; // Update classLabel based on dropdown change
+            updateClassDetailsBasedOnLabel(); // Refresh details using the updated classLabel
         });
+    }
+    
+    document.addEventListener('DOMContentLoaded', function() {
+        initializeClassSelection();
+        initializeRollingMechanics(); // Ensure other initializations are called
+    });
