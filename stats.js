@@ -144,25 +144,24 @@ function initializeClassSelection() {
                 }
            
         };
-    
         function updateClassDetailsBasedOnLabel() {
             const classLabel = document.getElementById('classLabel').textContent;
             const classInfo = classesData[classLabel];
         
             if (classLabel && classLabel !== 'Description' && classInfo) {
-                // Assuming 'classDesc' is an <input type="text"> for the description
+                // Fill in the class description in the input field
                 document.getElementById('classDesc').value = classInfo.description;
         
-                // Concatenate all abilities into a single string for 'classAbilities', an <input type="text">
-                const abilitiesText = classInfo.abilities.map(ability => `${ability.name}: ${ability.ability_description}`).join(', ');
+                // Join abilities into a single line and fill in the input field
+                // This assumes each class has abilities concise enough to fit reasonably in a single line.
+                const abilitiesText = classInfo.abilities.map(ability => `${ability.name}: ${ability.ability_description}`).join('; ');
                 document.getElementById('classAbilities').value = abilitiesText;
             } else {
                 // If 'Description' or no matching class, show placeholder text in input fields
                 document.getElementById('classDesc').value = 'No information available.';
                 document.getElementById('classAbilities').value = 'No information available.';
             }
-        }
-        
+        }        
     
         function populateDropdown() {
             const dropdown = document.getElementById('classDropdown');
