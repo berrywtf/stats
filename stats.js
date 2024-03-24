@@ -53,13 +53,24 @@ function initializeClassSelection() {
     const classDescription = document.getElementById('classDescription');
     const classAbility = document.getElementById('classAbilities');
 
-    // Listen for changes in the dropdown to update the class information
+    // Retrieve the last selected class from localStorage, if available
+    const savedClass = localStorage.getItem('selectedClass');
+
+    // If there's a saved selection and it's an option in the dropdown, use it
+    if(savedClass && dropdown.querySelector(`option[value="${savedClass}"]`)) {
+        dropdown.value = savedClass;
+    }
+
+    // Listen for changes in the dropdown to update the class information and save the selection
     dropdown.addEventListener('change', function() {
         const selectedClass = this.value;
+        // Save the selected class to localStorage
+        localStorage.setItem('selectedClass', selectedClass);
+        // Update the description and abilities text areas
         updateClassInfo(selectedClass, classDescription, classAbility);
     });
 
-    // Trigger change event on initial load to populate the text areas based on the default selected class
+    // Trigger the change event to update the text areas based on the current or saved selection
     dropdown.dispatchEvent(new Event('change'));
 }
 
@@ -73,8 +84,6 @@ function updateClassInfo(className, descInput, abilitiesInput) {
         abilitiesInput.value = 'Select a class to see the abilities.';
     }
 }
-
-
 
 function getClassInfo(className) {
     // Example classesData structure as previously defined
