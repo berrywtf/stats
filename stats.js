@@ -54,12 +54,12 @@ function initializeClassSelection() {
     const abilitiesInput = document.getElementById('classAbilities');
 
     dropdown.addEventListener('change', function() {
-        const selectedClass = this.value;
+        const selectedClass = this.innerText;
         updateClassInfo(selectedClass, descInput, abilitiesInput);
     });
 
     // Initial update for default selection, if applicable.
-    const initialClass = dropdown.options[dropdown.selectedIndex]?.value;
+    const initialClass = dropdown.options[dropdown.selectedIndex]?.innerText;
     if (initialClass) {
         updateClassInfo(initialClass, descInput, abilitiesInput);
     }
@@ -68,19 +68,19 @@ function initializeClassSelection() {
 
 function updateClassInfo(className, descInput, abilitiesInput) {
     // Clear the current content first to ensure it's empty before adding new content
-    descInput.value = '';
-    abilitiesInput.value = '';
+    descInput.innerText = '';
+    abilitiesInput.innerText = '';
 
     const classInfo = getClassInfo(className);
 
     if (classInfo) {
         // Set the inputs to the new class's description and abilities
-        descInput.value = classInfo.description;
-        abilitiesInput.value = classInfo.abilities.join('\n'); // Use '\n' for line breaks in textarea
+        descInput.innerText = classInfo.description;
+        abilitiesInput.innerText = classInfo.abilities.join('\n'); // Use '\n' for line breaks in textarea
     } else {
         // Handle cases where classInfo is null (e.g., default or invalid selection)
-        descInput.value = 'Select a class to see the description.';
-        abilitiesInput.value = 'Select a class to see the abilities.';
+        descInput.innerText = 'Select a class to see the description.';
+        abilitiesInput.innerText = 'Select a class to see the abilities.';
     }
 }
 
