@@ -58,29 +58,32 @@ document.addEventListener("DOMContentLoaded", function () {
       });
     });
   }
-  
   function initializeClassSelection() {
     const dropdown = document.getElementById("classDropdown");
+    const classLabel = document.getElementById("classLabel"); // Ensure this is a <textarea>
     const classDescription = document.getElementById("classDescription");
     const classAbility = document.getElementById("classAbility");
-    const classLabel = document.getElementById("classLabel");
-  
+
+    // Populate dropdown and ensure options are added correctly
     Object.keys(getClassInfo()).forEach((className) => {
-      const option = new Option(className, className);
-      dropdown.add(option);
+        const option = new Option(className, className);
+        dropdown.add(option);
     });
-  
-    dropdown.addEventListener("change", function () {
-      const selectedClass = this.value;
-      classLabel.value = selectedClass; 
-      updateClassInfo(selectedClass, classDescription, classAbility);
+
+    // Attach a 'change' event listener to the dropdown
+    dropdown.addEventListener("change", function() {
+        const selectedClass = this.value;
+        // Directly set the value of the <textarea> for classLabel
+        classLabel.value = selectedClass; // This updates the textarea
+        updateClassInfo(selectedClass, classDescription, classAbility);
     });
-  
+
+    // Manually trigger the dropdown's change event to initialize text areas
     if (dropdown.options.length > 0) {
-      dropdown.selectedIndex = 0;
-      dropdown.dispatchEvent(new Event("change"));
+        dropdown.selectedIndex = 0;
+        dropdown.dispatchEvent(new Event("change"));
     }
-  }
+}
   
   function updateClassInfo(className, classDescription, classAbility) {
     const classInfo = getClassInfo(className);
