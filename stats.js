@@ -44,7 +44,6 @@ export const statRoller = (() => {
         }
     };
     
-    
     const getRandomInt = (min, max) => Math.floor(Math.random() * (max - min + 1) + min);
 
     const rollDice = () => Math.max(8, Array.from({ length: 4 }, () => getRandomInt(1, 6))
