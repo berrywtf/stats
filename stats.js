@@ -1,7 +1,9 @@
 document.addEventListener('DOMContentLoaded', function() {
     initializeRollingMechanics();
-    initializeClassSelection();
+    initializeClassSelection(); // Renamed to match the function definition.
 });
+
+let rollCount = 3;
 
 function getRandomInt(min, max) {
     return Math.floor(Math.random() * (max - min + 1) + min);
@@ -9,7 +11,7 @@ function getRandomInt(min, max) {
 
 function rollDice() {
     return Math.max(8, Array.from({ length: 4 }, () => getRandomInt(1, 6))
-        .sort((a, b) => b - a)
+        .sort((a, b) => a - b)
         .slice(1)
         .reduce((a, b) => a + b, 0));
 }
@@ -48,40 +50,43 @@ function resetStatsAndShowButtons() {
 
 function initializeClassSelection() {
     const dropdown = document.getElementById('classDropdown');
-    const classLabel = document.getElementById('classLabel'); // Assuming this is a textarea for showing the class name.
-    const classDescription = document.getElementById('classDescription');
-    const classAbility = document.getElementById('classAbilities');
-
-    Object.keys(getClassInfo()).forEach(className => {
-        const option = new Option(className, className);
-        dropdown.add(option);
-    });
+    const descInput = document.getElementById('classDescription');
+    const abilitiesInput = document.getElementById('classAbility');
 
     dropdown.addEventListener('change', function() {
         const selectedClass = this.value;
-        classLabel.value = selectedClass; // Update the textarea with the selected class name
-        updateClassInfo(selectedClass, classDescription, classAbility);
+        updateClassInfo(selectedClass, descInput, abilitiesInput);
     });
 
-    // Trigger the change event on initialization to load the default class info
-    if (dropdown.options.length > 0) {
-        dropdown.dispatchEvent(new Event('change'));
+    // Initial update for default selection, if applicable.
+    const initialClass = dropdown.options[dropdown.selectedIndex]?.value;
+    if (initialClass) {
+        updateClassInfo(initialClass, descInput, abilitiesInput);
     }
 }
 
+
 function updateClassInfo(className, descInput, abilitiesInput) {
+    // Clear the current content first to ensure it's empty before adding new content
+    descInput.value = '';
+    abilitiesInput.value = '';
+
     const classInfo = getClassInfo(className);
 
     if (classInfo) {
+        // Set the inputs to the new class's description and abilities
         descInput.value = classInfo.description;
-        abilitiesInput.value = classInfo.abilities.join('\n');
+        abilitiesInput.value = classInfo.abilities.join('\n'); // Use '\n' for line breaks in textarea
     } else {
+        // Handle cases where classInfo is null (e.g., default or invalid selection)
         descInput.value = 'Select a class to see the description.';
         abilitiesInput.value = 'Select a class to see the abilities.';
     }
 }
 
-function getClassInfo(className = null) {
+
+function getClassInfo(className) {
+    // Example classesData structure as previously defined
     const classesData = {
         Juicer: {
             description: "Light Armor. Experts in extracting essence, adept at getting information or crafting concoctions.",
