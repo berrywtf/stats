@@ -150,19 +150,14 @@ function initializeClassSelection() {
             const classInfo = classesData[classLabel];
     
             if (classLabel && classLabel !== 'Description' && classInfo) {
-                // Matching class found, update details
-                document.getElementById('classDesc').textContent = classInfo.description;
-                const abilitiesList = document.getElementById('classAbilities');
-                abilitiesList.innerHTML = ''; // Clear existing list
-                classInfo.abilities.forEach(ability => {
-                    const li = document.createElement('li');
-                    li.textContent = `${ability.name}: ${ability.ability_description}`;
-                    abilitiesList.appendChild(li);
-                });
+                // Matching class found, update details in input/textarea
+                document.getElementById('classDesc').value = classInfo.description; // Assuming 'classDesc' is now a <textarea> or <input>
+                const abilities = classInfo.abilities.map(ability => `${ability.name}: ${ability.ability_description}`).join('\n');
+                document.getElementById('classAbilities').value = abilities; // Assuming 'classAbilities' is a <textarea>
             } else {
-                // 'Description' or no matching class, show placeholder text
-                document.getElementById('classDesc').textContent = 'No information available.';
-                document.getElementById('classAbilities').innerHTML = '';
+                // 'Description' or no matching class, show placeholder text in input/textarea
+                document.getElementById('classDesc').value = 'No information available.';
+                document.getElementById('classAbilities').value = 'No information available.';
             }
         }
     
