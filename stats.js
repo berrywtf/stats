@@ -66,15 +66,24 @@ function initializeClassSelection() {
 
     dropdown.addEventListener('change', function() {
         const selectedClass = this.value;
+        localStorage.setItem('selectedClass', selectedClass);
         updateClassInfo(selectedClass, classDescription, classAbility);
     });
 
-    // Initial update for default selection, if applicable.
-    if (dropdown.options.length > 0) {
-        const initialClass = dropdown.options[dropdown.selectedIndex].value;
-        updateClassInfo(initialClass, classDescription, classAbility);
+    // Load saved class selection from localStorage
+    const savedClass = localStorage.getItem('selectedClass');
+    if (savedClass) {
+        dropdown.value = savedClass;
+        updateClassInfo(savedClass, classDescription, classAbility);
+    } else {
+        // Handle initial selection or default case
+        if (dropdown.options.length > 0) {
+            const initialClass = dropdown.options[dropdown.selectedIndex].value;
+            updateClassInfo(initialClass, classDescription, classAbility);
+        }
     }
 }
+
 
 function updateClassInfo(className, classDescription, classAbility) {
     const classInfo = getClassInfo(className);
