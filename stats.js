@@ -53,20 +53,14 @@ function initializeClassSelection() {
     const classDescription = document.getElementById('classDescription');
     const classAbility = document.getElementById('classAbilities');
 
-    Object.keys(getClassInfo()).forEach(className => {
-        const option = new Option(className, className);
-        dropdown.add(option);
-    });
-
+    // Listen for changes in the dropdown to update the class information
     dropdown.addEventListener('change', function() {
         const selectedClass = this.value;
         updateClassInfo(selectedClass, classDescription, classAbility);
     });
 
-    if(dropdown.options.length > 0) {
-        dropdown.selectedIndex = 0;
-        dropdown.dispatchEvent(new Event('change')); // To update text areas upon initial load
-    }
+    // Trigger change event on initial load to populate the text areas based on the default selected class
+    dropdown.dispatchEvent(new Event('change'));
 }
 
 function updateClassInfo(className, descInput, abilitiesInput) {
@@ -79,6 +73,7 @@ function updateClassInfo(className, descInput, abilitiesInput) {
         abilitiesInput.value = 'Select a class to see the abilities.';
     }
 }
+
 
 
 function getClassInfo(className) {
