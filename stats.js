@@ -48,6 +48,7 @@ function resetStatsAndShowButtons() {
     });
 }
 
+
 function initializeClassSelection() {
     const dropdown = document.getElementById('classDropdown');
     const classDescription = document.getElementById('classDescription');
