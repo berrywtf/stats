@@ -1,7 +1,17 @@
 document.addEventListener('DOMContentLoaded', function() {
     initializeRollingMechanics();
-    initializeClassSelection(); // Renamed to match the function definition.
+    initializeClassSelection();
 });
+
+function initializeRollingMechanics() {
+    // Attach event listeners to each stat's roll button
+    document.querySelectorAll('[id$="-button"]').forEach(button => {
+        button.addEventListener('click', function() {
+            const statType = button.id.replace('-button', ''); // e.g., 'strength'
+            animateRoll(`${statType}-stat`, `${statType}-modifier`, button.id);
+        });
+    });
+}
 
 let rollCount = 3;
 
