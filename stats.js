@@ -50,30 +50,36 @@ function resetStatsAndShowButtons() {
 
 function initializeClassSelection() {
     const dropdown = document.getElementById('classDropdown');
-    const classLabel = document.getElementById('classLabel'); // Ensuring this is the textarea
+    const classDescription = document.getElementById('classDescription');
+    const classAbility = document.getElementById('classAbilities');
 
     Object.keys(getClassInfo()).forEach(className => {
         const option = new Option(className, className);
         dropdown.add(option);
     });
 
-    // Listen for changes in the dropdown to update the class information
     dropdown.addEventListener('change', function() {
         const selectedClass = this.value;
-        // Explicitly setting the value of the textarea for classLabel
-        classLabel.value = selectedClass;
-        const classInfo = getClassInfo(selectedClass);
-        document.getElementById('classDescription').value = classInfo.description;
-        document.getElementById('classAbilities').value = classInfo.abilities.join('\n');
+        updateClassInfo(selectedClass, classDescription, classAbility);
     });
 
-    // Initialize the dropdown with the first class info or saved selection
     if(dropdown.options.length > 0) {
-        const initialIndex = dropdown.options.selectedIndex;
-        dropdown.value = dropdown.options[initialIndex].value;
-        dropdown.dispatchEvent(new Event('change')); // To update label and text areas upon initial load
+        dropdown.selectedIndex = 0;
+        dropdown.dispatchEvent(new Event('change')); // To update text areas upon initial load
     }
 }
+
+function updateClassInfo(className, descInput, abilitiesInput) {
+    const classInfo = getClassInfo(className);
+    if (classInfo) {
+        descInput.value = classInfo.description;
+        abilitiesInput.value = classInfo.abilities.join('\n');
+    } else {
+        descInput.value = 'Select a class to see the description.';
+        abilitiesInput.value = 'Select a class to see the abilities.';
+    }
+}
+
 
 function getClassInfo(className) {
     // Example classesData structure as previously defined
