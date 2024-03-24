@@ -57,6 +57,7 @@ function initializeClassSelection() {
     const dropdown = document.getElementById('classDropdown');
     const classDescription = document.getElementById('classDescription');
     const classAbility = document.getElementById('classAbility');
+    const classLabel = document.getElementById('classLabel'); // Get the classLabel element
 
     // Populate the dropdown with class names
     Object.keys(getClassInfo()).forEach(className => {
@@ -66,23 +67,23 @@ function initializeClassSelection() {
 
     dropdown.addEventListener('change', function() {
         const selectedClass = this.value;
-        localStorage.setItem('selectedClass', selectedClass);
         updateClassInfo(selectedClass, classDescription, classAbility);
+        // Optionally update classLabel if needed, e.g., classLabel.textContent = selectedClass;
     });
 
-    // Load saved class selection from localStorage
-    const savedClass = localStorage.getItem('selectedClass');
-    if (savedClass) {
-        dropdown.value = savedClass;
-        updateClassInfo(savedClass, classDescription, classAbility);
-    } else {
-        // Handle initial selection or default case
-        if (dropdown.options.length > 0) {
-            const initialClass = dropdown.options[dropdown.selectedIndex].value;
-            updateClassInfo(initialClass, classDescription, classAbility);
+    // Set the dropdown value to match classLabel's text, if it exists and matches an option
+    if (classLabel && classLabel.textContent) {
+        const classLabelText = classLabel.textContent.trim();
+        if (dropdown.querySelector(`option[value="${classLabelText}"]`)) {
+            dropdown.value = classLabelText;
         }
     }
+
+    // After setting the dropdown (or not, if classLabel doesn't match), update class info
+    const selectedClass = dropdown.value;
+    updateClassInfo(selectedClass, classDescription, classAbility);
 }
+
 
 
 function updateClassInfo(className, classDescription, classAbility) {
