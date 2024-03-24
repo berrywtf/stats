@@ -99,8 +99,8 @@ export const statRoller = (() => {
 
     const updateClassInfo = (className) => {
         const classInfo = classesData[className];
-        const descElement = document.getElementById('classDesc');
-        const abilitiesElement = document.getElementById('classAbilities');
+        const descElement = document.getElementById('classDescription');
+        const abilitiesElement = document.getElementById('classAbility');
 
         descElement.textContent = classInfo?.description || 'Select a class to see the description.';
         abilitiesElement.innerHTML = classInfo?.abilities.map(ability => `<li>${ability}</li>`).join('') || '<li>Select a class to see the abilities.</li>';
