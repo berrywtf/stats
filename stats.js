@@ -145,46 +145,46 @@ function initializeClassSelection() {
            
         };
     
-     
-    function populateDropdown() {
-        const dropdown = document.getElementById('classDropdown');
-        Object.keys(classesData).forEach(className => {
-            const option = document.createElement('option');
-            option.value = className;
-            option.textContent = className;
-            dropdown.appendChild(option);
-        });
-    }
-
-    function updateClassDetails(className) {
-        const classInfo = classesData[className];
-        if (!classInfo) {
-            console.error("Class not found:", className);
-            return;
+    
+        function populateDropdown() {
+            const dropdown = document.getElementById('classDropdown');
+            Object.keys(classesData).forEach(className => {
+                const option = document.createElement('option');
+                option.value = className;
+                option.textContent = className;
+                dropdown.appendChild(option);
+            });
         }
-        document.getElementById('classDesc').textContent = classInfo.description;
-        const abilitiesList = document.getElementById('classAbilities');
-        abilitiesList.innerHTML = ''; // Clear existing abilities
-        classInfo.abilities.forEach(ability => {
-            const li = document.createElement('li');
-            li.textContent = `${ability.name}: ${ability.ability_description}`;
-            abilitiesList.appendChild(li);
+    
+        function updateClassDetails(className) {
+            const classInfo = classesData[className];
+            document.getElementById('classDesc').textContent = classInfo.description;
+            const abilitiesList = document.getElementById('classAbilities');
+            abilitiesList.innerHTML = ''; // Clear existing abilities
+            classInfo.abilities.forEach(ability => {
+                const li = document.createElement('li');
+                li.textContent = `${ability.name}: ${ability.ability_description}`;
+                abilitiesList.appendChild(li);
+            });
+        }
+    
+        populateDropdown();
+    
+        // Retrieve the previously selected class from localStorage
+        const savedClassSelection = localStorage.getItem('selectedClass');
+        if (savedClassSelection && classesData[savedClassSelection]) {
+            document.getElementById('classDropdown').value = savedClassSelection;
+            updateClassDetails(savedClassSelection);
+        } else {
+            // Optionally, initialize with the first class if no selection is saved
+            const firstClassName = Object.keys(classesData)[0];
+            document.getElementById('classDropdown').value = firstClassName;
+            updateClassDetails(firstClassName);
+        }
+    
+        document.getElementById('classDropdown').addEventListener('change', function() {
+            updateClassDetails(this.value);
+            // Save the selected class to localStorage
+            localStorage.setItem('selectedClass', this.value);
         });
     }
-
-    populateDropdown();
-
-    // Check if a class is already selected; otherwise, set to the first class
-    const currentSelection = document.getElementById('classDropdown').value;
-    if (!currentSelection || currentSelection === "") {
-        const firstClassName = Object.keys(classesData)[0];
-        document.getElementById('classDropdown').value = firstClassName;
-        updateClassDetails(firstClassName);
-    } else {
-        updateClassDetails(currentSelection);
-    }
-
-    document.getElementById('classDropdown').addEventListener('change', function() {
-        updateClassDetails(this.value);
-    });
-}
