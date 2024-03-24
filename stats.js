@@ -3,25 +3,18 @@ document.addEventListener('DOMContentLoaded', function() {
     initializeClassSelection();
 });
 
-function getRandomInt(min, max) {
-    return Math.floor(Math.random() * (max - min + 1) + min);
-}
-
-function rollDice() {
-    return Math.max(8, Array.from({ length: 4 }, () => getRandomInt(1, 6))
-        .sort((a, b) => b - a)
-        .slice(1)
-        .reduce((a, b) => a + b, 0));
-}
-
-function calculateModifier(stat) {
-    return Math.floor((stat - 10) / 2);
+function initializeRollingMechanics() {
+    // Attach event listeners to each stat's roll button
+    document.querySelectorAll('[id$="-button"]').forEach(button => {
+        button.addEventListener('click', function() {
+            const statType = button.id.replace('-button', ''); // e.g., 'strength'
+            animateRoll(`${statType}-stat`, `${statType}-modifier`, button.id);
+        });
+    });
 }
 
 function animateRoll(statId, modId, buttonId) {
-    if (document.getElementById(statId).value !== '0') {
-        return;
-    }
+    if (document.getElementById(statId).value !== '0') return;
 
     let count = 0;
     const intervalId = setInterval(() => {
@@ -38,6 +31,25 @@ function animateRoll(statId, modId, buttonId) {
     }, 100);
 }
 
+
+let rollCount = 3;
+
+function getRandomInt(min, max) {
+    return Math.floor(Math.random() * (max - min + 1) + min);
+}
+
+function rollDice() {
+    return Math.max(8, Array.from({ length: 4 }, () => getRandomInt(1, 6))
+        .sort((a, b) => a - b)
+        .slice(1)
+        .reduce((a, b) => a + b, 0));
+}
+
+function calculateModifier(stat) {
+    return Math.floor((stat - 10) / 2);
+}
+
+
 function resetStatsAndShowButtons() {
     ['strength', 'dexterity', 'mind', 'charisma'].forEach(stat => {
         document.getElementById(`${stat}-stat`).value = '0';
@@ -46,48 +58,41 @@ function resetStatsAndShowButtons() {
     });
 }
 
-function initializeRollingMechanics() {
-    ['strength', 'dexterity', 'mind', 'charisma'].forEach(stat => {
-        const buttonId = `${stat}-button`;
-        document.getElementById(buttonId).addEventListener('click', function() {
-            animateRoll(`${stat}-stat`, `${stat}-modifier`, buttonId);
-        });
-    });
-}
 
 function initializeClassSelection() {
     const dropdown = document.getElementById('classDropdown');
-    const classLabelInput = document.getElementById('classLabel'); // Now targeting a text input
     const classDescription = document.getElementById('classDescription');
     const classAbility = document.getElementById('classAbility');
 
-    // Loading the saved class selection from localStorage
-    const savedClass = localStorage.getItem('selectedClass');
-    if(savedClass && dropdown.querySelector(`option[value="${savedClass}"]`)) {
-        dropdown.value = savedClass;
-    }
-
-    dropdown.addEventListener('change', function() {
-        const selectedClass = this.options[this.selectedIndex].text; // Using option text for display
-        localStorage.setItem('selectedClass', this.value); // Storing the selected class value for persistence
-        classLabelInput.value = selectedClass; // Updating the text input to display the selected class name
-        updateClassInfo(this.value, classDescription, classAbility);
+    // Set event listener for class selection change
+    dropdown.addEventListener('change', () => {
+        const selectedClass = dropdown.value;
+        const classInfo = getClassInfo(selectedClass);
+        classDescription.value = classInfo ? classInfo.description : 'Select a class to see the description.';
+        classAbility.value = classInfo ? classInfo.abilities.join('\n') : 'Select a class to see the abilities.';
     });
 
-    // Manually trigger the change event on page load to update UI elements based on the current or saved selection
+    // Trigger the change event manually to initialize the description and abilities on page load
     dropdown.dispatchEvent(new Event('change'));
 }
-
 function updateClassInfo(className, descInput, abilitiesInput) {
+    // Clear the current content first to ensure it's empty before adding new content
+    descInput.value = '';
+    abilitiesInput.value = '';
+
     const classInfo = getClassInfo(className);
+
     if (classInfo) {
+        // Set the inputs to the new class's description and abilities
         descInput.value = classInfo.description;
-        abilitiesInput.value = classInfo.abilities.join('\n');
+        abilitiesInput.value = classInfo.abilities.join('\n'); // Use '\n' for line breaks in textarea
     } else {
+        // Handle cases where classInfo is null (e.g., default or invalid selection)
         descInput.value = 'Select a class to see the description.';
         abilitiesInput.value = 'Select a class to see the abilities.';
     }
 }
+
 
 function getClassInfo(className) {
     // Example classesData structure as previously defined
