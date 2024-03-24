@@ -2,26 +2,6 @@ document.addEventListener('DOMContentLoaded', function() {
     initializeRollingMechanics();
     initializeClassSelection();
 });
-
-document.addEventListener('DOMContentLoaded', function() {
-    initializeRollingMechanics();
-    setupResetButton();
-});
-
-function initializeRollingMechanics() {
-    document.querySelectorAll('[id$="-button"]').forEach(button => {
-        button.addEventListener('click', function() {
-            const statType = button.id.replace('-button', ''); // Extract stat type from button ID
-            animateRoll(`${statType}-stat`, `${statType}-modifier`, button.id);
-        });
-    });
-}
-
-function setupResetButton() {
-    // Assuming your reset button has an ID of 'reset-button'
-    document.getElementById('reset-button').addEventListener('click', resetStatsAndShowButtons);
-}
-
 let rollCount = 3;
 
 function getRandomInt(min, max) {
@@ -30,7 +10,7 @@ function getRandomInt(min, max) {
 
 function rollDice() {
     return Math.max(8, Array.from({ length: 4 }, () => getRandomInt(1, 6))
-        .sort((a, b) => b - a)
+        .sort((a, b) => a - b)
         .slice(1)
         .reduce((a, b) => a + b, 0));
 }
@@ -44,42 +24,48 @@ function animateRoll(statId, modId, buttonId) {
 
     let count = 0;
     const intervalId = setInterval(() => {
-        document.getElementById(statId).value = getRandomInt(1, 18); // Simulate rolling
         if (count >= 10) {
             clearInterval(intervalId);
             const finalValue = rollDice();
             document.getElementById(statId).value = finalValue;
             document.getElementById(modId).value = calculateModifier(finalValue);
-            document.getElementById(buttonId).style.display = 'none'; // Hide roll button after final value is set
+            document.getElementById(buttonId).style.display = 'none';
+        } else {
+            document.getElementById(statId).value = getRandomInt(1, 18);
         }
         count++;
-    }, 100); // Adjust speed as needed for desired animation effect
+    }, 100);
 }
 
 function resetStatsAndShowButtons() {
     ['strength', 'dexterity', 'mind', 'charisma'].forEach(stat => {
-        document.getElementById(`${stat}-stat`).value = '0';
+        document.getElementById(`${stat}-stat`).value = '0'; // Ensure reset to '0' for proper initialization check
         document.getElementById(`${stat}-modifier`).value = '0';
-        document.getElementById(`${stat}-button`).style.display = 'inline-block'; // Show roll button again
+        document.getElementById(`${stat}-button`).style.display = '';
     });
 }
 
-function initializeClassSelection() {
-    const dropdown = document.getElementById('classDropdown');
-    const descInput = document.getElementById('classDesc');
-    const abilitiesInput = document.getElementById('classAbilities');
-
-    dropdown.addEventListener('change', function() {
-        const selectedClass = this.value;
-        updateClassInfo(selectedClass, descInput, abilitiesInput);
-    });
-
-    // Initial update for default selection, if applicable.
-    const initialClass = dropdown.options[dropdown.selectedIndex]?.value;
-    if (initialClass) {
-        updateClassInfo(initialClass, descInput, abilitiesInput);
+document.getElementById('reroll-button').addEventListener('click', () => {
+    if (rollCount > 0) {
+        rollCount--;
+        resetStatsAndShowButtons();
+        document.getElementById('stat-message').innerText = `Stats reset. Roll each stat again. ${rollCount} rerolls left.`;
+    } else {
+        document.getElementById('stat-message').innerText = "No rerolls left.";
     }
+});
+
+function initialize() {
+    ['strength', 'dexterity', 'mind', 'charisma'].forEach(stat => {
+        document.getElementById(`${stat}-button`).addEventListener('click', () => {
+            animateRoll(`${stat}-stat`, `${stat}-modifier`, `${stat}-button`);
+        });
+    });
+
+    resetStatsAndShowButtons(); // Ensure a clean slate on page load
 }
+
+document.addEventListener('DOMContentLoaded', initialize);
 
 
 function updateClassInfo(className, descInput, abilitiesInput) {
