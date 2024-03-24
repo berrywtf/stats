@@ -1,7 +1,35 @@
 document.addEventListener('DOMContentLoaded', function() {
     initializeRollingMechanics();
-    initializeClassSelection(); // Renamed to match the function definition.
+    initializeClassSelection();
 });
+
+function initializeRollingMechanics() {
+    // Attach event listeners to each stat's roll button
+    document.querySelectorAll('[id$="-button"]').forEach(button => {
+        button.addEventListener('click', function() {
+            const statType = button.id.replace('-button', ''); // e.g., 'strength'
+            animateRoll(`${statType}-stat`, `${statType}-modifier`, button.id);
+        });
+    });
+}
+
+function animateRoll(statId, modId, buttonId) {
+    if (document.getElementById(statId).value !== '0') return;
+
+    let count = 0;
+    const intervalId = setInterval(() => {
+        if (count >= 10) {
+            clearInterval(intervalId);
+            const finalValue = rollDice();
+            document.getElementById(statId).value = finalValue;
+            document.getElementById(modId).value = calculateModifier(finalValue);
+            document.getElementById(buttonId).style.display = 'none';
+        } else {
+            document.getElementById(statId).value = getRandomInt(1, 18);
+        }
+        count++;
+    }, 100);
+}
 
 let rollCount = 3;
 
@@ -50,8 +78,8 @@ function resetStatsAndShowButtons() {
 
 function initializeClassSelection() {
     const dropdown = document.getElementById('classDropdown');
-    const descInput = document.getElementById('classDesc');
-    const abilitiesInput = document.getElementById('classAbilities');
+    const descInput = document.getElementById('classDescription');
+    const abilitiesInput = document.getElementById('classAbility');
 
     dropdown.addEventListener('change', function() {
         const selectedClass = this.value;
