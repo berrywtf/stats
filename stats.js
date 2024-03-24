@@ -1,96 +1,100 @@
 document.addEventListener("DOMContentLoaded", function () {
-  initializeRollingMechanics();
-  initializeClassSelection();
-});
-
-function getRandomInt(min, max) {
-  return Math.floor(Math.random() * (max - min + 1) + min);
-}
-
-function rollDice() {
-  return Math.max(
-    8,
-    Array.from({ length: 4 }, () => getRandomInt(1, 6))
-      .sort((a, b) => b - a)
-      .slice(1)
-      .reduce((a, b) => a + b, 0)
-  );
-}
-
-function calculateModifier(stat) {
-  return Math.floor((stat - 10) / 2);
-}
-
-function animateRoll(statId, modId, buttonId) {
-  if (document.getElementById(statId).value !== "0") {
-    return;
+    initializeRollingMechanics();
+    initializeClassSelection();
+  });
+  
+  function getRandomInt(min, max) {
+    return Math.floor(Math.random() * (max - min + 1) + min);
   }
-
-  let count = 0;
-  const intervalId = setInterval(() => {
-    if (count >= 10) {
-      clearInterval(intervalId);
-      const finalValue = rollDice();
-      document.getElementById(statId).value = finalValue;
-      document.getElementById(modId).value = calculateModifier(finalValue);
-      document.getElementById(buttonId).style.display = "none";
-    } else {
-      document.getElementById(statId).value = getRandomInt(1, 18);
+  
+  function rollDice() {
+    return Math.max(
+      8,
+      Array.from({ length: 4 }, () => getRandomInt(1, 6))
+        .sort((a, b) => b - a)
+        .slice(1)
+        .reduce((a, b) => a + b, 0)
+    );
+  }
+  
+  function calculateModifier(stat) {
+    return Math.floor((stat - 10) / 2);
+  }
+  
+  function animateRoll(statId, modId, buttonId) {
+    if (document.getElementById(statId).value !== "0") {
+      return;
     }
-    count++;
-  }, 100);
-}
-
-function resetStatsAndShowButtons() {
-  ["strength", "dexterity", "mind", "charisma"].forEach((stat) => {
-    document.getElementById(`${stat}-stat`).value = "0";
-    document.getElementById(`${stat}-modifier`).value = "0";
-    document.getElementById(`${stat}-button`).style.display = "inline-block";
-  });
-}
-
-function initializeRollingMechanics() {
-  // Placeholder for your implementation of stat rolling mechanics initialization
-}
-
-function initializeClassSelection() {
-  const dropdown = document.getElementById("classDropdown");
-  const classDescription = document.getElementById("classDescription");
-  const classAbility = document.getElementById("classAbility");
-  const classLabel = document.getElementById("classLabel"); // This is now a textarea.
-
-  Object.keys(getClassInfo()).forEach((className) => {
-    const option = new Option(className, className);
-    dropdown.add(option);
-  });
-
-  dropdown.addEventListener("change", function () {
-    const selectedClass = this.value;
-    classLabel.value = selectedClass; // Update the textarea with the selected class name
-    updateClassInfo(selectedClass, classDescription, classAbility); // Update class information based on selection
-  });
-
-  // Initial update based on the default or first dropdown option
-  if (dropdown.options.length > 0) {
-    const initialClass = dropdown.options[0].value;
-    classLabel.value = initialClass;
-    updateClassInfo(initialClass, classDescription, classAbility);
+  
+    let count = 0;
+    const intervalId = setInterval(() => {
+      if (count >= 10) {
+        clearInterval(intervalId);
+        const finalValue = rollDice();
+        document.getElementById(statId).value = finalValue;
+        document.getElementById(modId).value = calculateModifier(finalValue);
+        document.getElementById(buttonId).style.display = "none";
+      } else {
+        document.getElementById(statId).value = getRandomInt(1, 18);
+      }
+      count++;
+    }, 100);
   }
-}
-
-function updateClassInfo(className, classDescription, classAbility) {
-  const classInfo = getClassInfo(className);
-  if (classInfo) {
-    classDescription.value = classInfo.description;
-    classAbility.value = classInfo.abilities.join("\n");
-  } else {
-    classDescription.value = "Select a class to see the description.";
-    classAbility.value = "Select a class to see the abilities.";
+  
+  function resetStatsAndShowButtons() {
+    ["strength", "dexterity", "mind", "charisma"].forEach((stat) => {
+      document.getElementById(`${stat}-stat`).value = "0";
+      document.getElementById(`${stat}-modifier`).value = "0";
+      document.getElementById(`${stat}-button`).style.display = "inline-block";
+    });
   }
-}
-
-function getClassInfo(className = null) {
-  const classesData = {
+  
+  function initializeRollingMechanics() {
+    // This function can include any specific initialization logic for rolling mechanics
+    // For example, attaching event listeners to roll buttons
+    ["strength", "dexterity", "mind", "charisma"].forEach(stat => {
+      document.getElementById(`${stat}-button`).addEventListener('click', function() {
+        animateRoll(`${stat}-stat`, `${stat}-modifier`, `${stat}-button`);
+      });
+    });
+  }
+  
+  function initializeClassSelection() {
+    const dropdown = document.getElementById("classDropdown");
+    const classDescription = document.getElementById("classDescription");
+    const classAbility = document.getElementById("classAbility");
+    const classLabel = document.getElementById("classLabel");
+  
+    Object.keys(getClassInfo()).forEach((className) => {
+      const option = new Option(className, className);
+      dropdown.add(option);
+    });
+  
+    dropdown.addEventListener("change", function () {
+      const selectedClass = this.value;
+      classLabel.value = selectedClass; 
+      updateClassInfo(selectedClass, classDescription, classAbility);
+    });
+  
+    if (dropdown.options.length > 0) {
+      dropdown.selectedIndex = 0;
+      dropdown.dispatchEvent(new Event("change"));
+    }
+  }
+  
+  function updateClassInfo(className, classDescription, classAbility) {
+    const classInfo = getClassInfo(className);
+    if (classInfo) {
+      classDescription.value = classInfo.description;
+      classAbility.value = classInfo.abilities.join("\n");
+    } else {
+      classDescription.value = "Select a class to see the description.";
+      classAbility.value = "Select a class to see the abilities.";
+    }
+  }
+  
+  function getClassInfo(className = null) {
+    const classesData = {
     Juicer: {
       description:
         "Light Armor. Experts in extracting essence, adept at getting information or crafting concoctions.",
