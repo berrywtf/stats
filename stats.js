@@ -52,12 +52,11 @@ function initializeRollingMechanics() {
     // Your implementation of stat rolling initialization goes here
     // This function was mentioned in the original script but not defined
 }
-
 function initializeClassSelection() {
     const dropdown = document.getElementById('classDropdown');
     const classDescription = document.getElementById('classDescription');
     const classAbility = document.getElementById('classAbility');
-    const classLabel = document.getElementById('classLabel'); // Element that holds the class name to display info for.
+    const classLabel = document.getElementById('classLabel');
 
     // Populate the dropdown with class names
     Object.keys(getClassInfo()).forEach(className => {
@@ -65,19 +64,30 @@ function initializeClassSelection() {
         dropdown.add(option);
     });
 
-    // Use classLabel to dictate initial displayed info
-    const initialClass = classLabel.textContent.trim();
+    // Attempt to set the initial selection based on classLabel or localStorage
+    const savedClass = localStorage.getItem('selectedClass');
+    let initialClass = classLabel.textContent.trim();
+    
+    // If classLabel is empty or doesn't match, use the saved selection if available
+    if (!initialClass || !dropdown.querySelector(`option[value="${initialClass}"]`)) {
+        if (savedClass && dropdown.querySelector(`option[value="${savedClass}"]`)) {
+            initialClass = savedClass;
+            classLabel.textContent = savedClass; // Update classLabel if fallback to savedClass is needed
+        } else {
+            initialClass = dropdown.options[0].value; // Default to the first option
+            classLabel.textContent = initialClass; // Ensure classLabel is updated accordingly
+        }
+    }
+    
+    // Set the dropdown to match the final decision
+    dropdown.value = initialClass;
     updateClassInfo(initialClass, classDescription, classAbility);
 
-    // If there's a matching option in the dropdown, set it as selected
-    const matchingOption = Array.from(dropdown.options).find(option => option.value === initialClass);
-    if (matchingOption) {
-        dropdown.value = initialClass;
-    }
-
-    // Update text areas based on dropdown change, but do not modify classLabel
+    // Save selection and update everything on change
     dropdown.addEventListener('change', function() {
         const selectedClass = this.value;
+        classLabel.textContent = selectedClass; // Update classLabel to reflect the new selection
+        localStorage.setItem('selectedClass', selectedClass); // Save the selection
         updateClassInfo(selectedClass, classDescription, classAbility);
     });
 }
@@ -92,6 +102,7 @@ function updateClassInfo(className, classDescription, classAbility) {
         classAbility.value = 'Select a class to see the abilities.';
     }
 }
+
 
 function getClassInfo(className = null) {
     const classesData = {
