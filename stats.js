@@ -1,6 +1,6 @@
 document.addEventListener('DOMContentLoaded', function() {
     initializeRollingMechanics();
-    initializeClassSelection(); // Renamed to match the function definition.
+    initializeClassSelection();
 });
 
 let rollCount = 3;
@@ -48,45 +48,42 @@ function resetStatsAndShowButtons() {
     });
 }
 
+function initializeRollingMechanics() {
+    // Your implementation of stat rolling initialization goes here
+    // This function was mentioned in the original script but not defined
+}
+
 function initializeClassSelection() {
     const dropdown = document.getElementById('classDropdown');
-    const descInput = document.getElementById('classDesc');
-    const abilitiesInput = document.getElementById('classAbilities');
+    const classDescription = document.getElementById('classDescription');
+    const classAbility = document.getElementById('classAbility');
+
+    // Populate the dropdown with class names
+    Object.keys(getClassInfo()).forEach(className => {
+        const option = new Option(className, className);
+        dropdown.add(option);
+    });
 
     dropdown.addEventListener('change', function() {
-        const selectedClass = this.innerText;
-        updateClassInfo(selectedClass, descInput, abilitiesInput);
+        const selectedClass = this.value;
+        updateClassInfo(selectedClass, classDescription, classAbility);
     });
 
     // Initial update for default selection, if applicable.
-    const initialClass = dropdown.options[dropdown.selectedIndex]?.innerText;
-    if (initialClass) {
-        updateClassInfo(initialClass, descInput, abilitiesInput);
+    if (dropdown.options.length > 0) {
+        const initialClass = dropdown.options[dropdown.selectedIndex].value;
+        updateClassInfo(initialClass, classDescription, classAbility);
     }
 }
 
-
-function updateClassInfo(className, descInput, abilitiesInput) {
-    // Clear the current content first to ensure it's empty before adding new content
-    descInput.innerText = '';
-    abilitiesInput.innerText = '';
-
+function updateClassInfo(className, classDescription, classAbility) {
     const classInfo = getClassInfo(className);
 
-    if (classInfo) {
-        // Set the inputs to the new class's description and abilities
-        descInput.innerText = classInfo.description;
-        abilitiesInput.innerText = classInfo.abilities.join('\n'); // Use '\n' for line breaks in textarea
-    } else {
-        // Handle cases where classInfo is null (e.g., default or invalid selection)
-        descInput.innerText = 'Select a class to see the description.';
-        abilitiesInput.innerText = 'Select a class to see the abilities.';
-    }
+    classDescription.value = classInfo ? classInfo.description : 'Select a class to see the description.';
+    classAbility.value = classInfo ? classInfo.abilities.join('\n') : 'Select a class to see the abilities.';
 }
 
-
-function getClassInfo(className) {
-    // Example classesData structure as previously defined
+function getClassInfo(className = null) {
     const classesData = {
         Juicer: {
             description: "Light Armor. Experts in extracting essence, adept at getting information or crafting concoctions.",
@@ -127,9 +124,14 @@ function getClassInfo(className) {
             abilities: [
                 "Seed Manipulation: Control plant growth"
             ]
-        }
-    };
-    
-
-    return classesData[className] || null;
+            }
+            };
+            // If className is not provided, return all class names for dropdown population
+if (className === null) {
+    return classesData;
 }
+
+// Return class info for the given className, or null if the class doesn't exist
+return classesData[className] || null;
+}
+
