@@ -71,13 +71,12 @@ function initializeRollingMechanics() {
                         {
                             "name": "Essence Extraction",
                             "ability_description": "Bonus on essence extraction rolls",
-                            "formula": "mind_modifier + currentLevel"
+            
                         },
                         {
                             "name": "Vitality Surge",
                             "ability_description": "Create a healing elixir",
-                            "formula": "currentLevel + mind_modifier",
-                            "uses_per_combat": "1 + (currentLevel / 4)"
+                       
                         }
                     ]
                 },
