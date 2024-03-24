@@ -57,7 +57,7 @@ function initializeClassSelection() {
     const dropdown = document.getElementById('classDropdown');
     const classDescription = document.getElementById('classDescription');
     const classAbility = document.getElementById('classAbility');
-    const classLabel = document.getElementById('classLabel'); // Element that dictates which class info to show
+    const classLabel = document.getElementById('classLabel'); // Element that holds the class name to display info for.
 
     // Populate the dropdown with class names
     Object.keys(getClassInfo()).forEach(className => {
@@ -65,22 +65,19 @@ function initializeClassSelection() {
         dropdown.add(option);
     });
 
-    // Initialize based on classLabel's content
-    const labelClass = classLabel.textContent.trim();
-    const classInfo = getClassInfo(labelClass);
+    // Use classLabel to dictate initial displayed info
+    const initialClass = classLabel.textContent.trim();
+    updateClassInfo(initialClass, classDescription, classAbility);
 
-    if (classInfo) {
-        // Update text areas directly from classLabel, bypassing dropdown state
-        updateClassInfo(labelClass, classDescription, classAbility);
-    } else {
-        // Fallback if no class matches classLabel
-        console.error("No class information found for:", labelClass);
+    // If there's a matching option in the dropdown, set it as selected
+    const matchingOption = Array.from(dropdown.options).find(option => option.value === initialClass);
+    if (matchingOption) {
+        dropdown.value = initialClass;
     }
 
-    // Listener to update classLabel and text areas when dropdown changes
+    // Update text areas based on dropdown change, but do not modify classLabel
     dropdown.addEventListener('change', function() {
         const selectedClass = this.value;
-        classLabel.textContent = selectedClass; // Reflect the new selection in classLabel
         updateClassInfo(selectedClass, classDescription, classAbility);
     });
 }
