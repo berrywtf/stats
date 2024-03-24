@@ -57,7 +57,6 @@ function initializeClassSelection() {
     const dropdown = document.getElementById('classDropdown');
     const classDescription = document.getElementById('classDescription');
     const classAbility = document.getElementById('classAbility');
-    const classLabel = document.getElementById('classLabel');
 
     // Populate the dropdown with class names
     Object.keys(getClassInfo()).forEach(className => {
@@ -65,36 +64,33 @@ function initializeClassSelection() {
         dropdown.add(option);
     });
 
-    // Retrieve the last selected class from localStorage
-    const savedClass = localStorage.getItem('selectedClass') || classLabel.textContent.trim();
-    if (dropdown.querySelector(`option[value="${savedClass}"]`)) {
-        dropdown.value = savedClass;
-        classLabel.textContent = savedClass; // Ensure classLabel matches the saved selection
-    }
-
-    updateClassInfo(savedClass, classDescription, classAbility); // Update text areas based on the saved or default class
-
-    // Listener for changes in dropdown selection
     dropdown.addEventListener('change', function() {
         const selectedClass = this.value;
-        classLabel.textContent = selectedClass; // Update classLabel to reflect the new selection
-        localStorage.setItem('selectedClass', selectedClass); // Save the new selection to localStorage
-        updateClassInfo(selectedClass, classDescription, classAbility); // Update text areas
+        localStorage.setItem('selectedClass', selectedClass);
+        updateClassInfo(selectedClass, classDescription, classAbility);
     });
+
+    // Load saved class selection from localStorage
+    const savedClass = localStorage.getItem('selectedClass');
+    if (savedClass) {
+        dropdown.value = savedClass;
+        updateClassInfo(savedClass, classDescription, classAbility);
+    } else {
+        // Handle initial selection or default case
+        if (dropdown.options.length > 0) {
+            const initialClass = dropdown.options[dropdown.selectedIndex].value;
+            updateClassInfo(initialClass, classDescription, classAbility);
+        }
+    }
 }
+
 
 function updateClassInfo(className, classDescription, classAbility) {
     const classInfo = getClassInfo(className);
-    if (classInfo) {
-        classDescription.value = classInfo.description;
-        classAbility.value = classInfo.abilities.join('\n');
-    } else {
-        // Handle the case where no valid class information is found
-        classDescription.value = 'Select a class to see the description.';
-        classAbility.value = 'Select a class to see the abilities.';
-    }
-}
 
+    classDescription.value = classInfo ? classInfo.description : 'Select a class to see the description.';
+    classAbility.value = classInfo ? classInfo.abilities.join('\n') : 'Select a class to see the abilities.';
+}
 
 function getClassInfo(className = null) {
     const classesData = {
