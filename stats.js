@@ -48,42 +48,41 @@ function resetStatsAndShowButtons() {
     });
 }
 
+
 function initializeClassSelection() {
     const dropdown = document.getElementById('classDropdown');
-    const descInput = document.getElementById('classDescription');
-    const abilitiesInput = document.getElementById('classAbility');
+    const classLabel = document.getElementById('classLabel'); // Assuming this is a textarea for showing the class name.
+    const classDescription = document.getElementById('classDescription');
+    const classAbility = document.getElementById('classAbilities');
+
+    Object.keys(getClassInfo()).forEach(className => {
+        const option = new Option(className, className);
+        dropdown.add(option);
+    });
 
     dropdown.addEventListener('change', function() {
         const selectedClass = this.value;
-        updateClassInfo(selectedClass, descInput, abilitiesInput);
+        classLabel.value = selectedClass; // Update the textarea with the selected class name
+        updateClassInfo(selectedClass, classDescription, classAbility);
     });
 
-    // Initial update for default selection, if applicable.
-    const initialClass = dropdown.options[dropdown.selectedIndex]?.value;
-    if (initialClass) {
-        updateClassInfo(initialClass, descInput, abilitiesInput);
+    // Trigger the change event on initialization to load the default class info
+    if (dropdown.options.length > 0) {
+        dropdown.dispatchEvent(new Event('change'));
     }
 }
 
-
 function updateClassInfo(className, descInput, abilitiesInput) {
-    // Clear the current content first to ensure it's empty before adding new content
-    descInput.value = '';
-    abilitiesInput.value = '';
-
     const classInfo = getClassInfo(className);
 
     if (classInfo) {
-        // Set the inputs to the new class's description and abilities
         descInput.value = classInfo.description;
-        abilitiesInput.value = classInfo.abilities.join('\n'); // Use '\n' for line breaks in textarea
+        abilitiesInput.value = classInfo.abilities.join('\n');
     } else {
-        // Handle cases where classInfo is null (e.g., default or invalid selection)
         descInput.value = 'Select a class to see the description.';
         abilitiesInput.value = 'Select a class to see the abilities.';
     }
 }
-
 
 function getClassInfo(className) {
     // Example classesData structure as previously defined
