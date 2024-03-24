@@ -55,36 +55,42 @@ function initializeRollingMechanics() {
     });
 }
 
+
 function initializeClassSelection() {
     const dropdown = document.getElementById('classDropdown');
+    const classLabel = document.getElementById('classLabel'); // Assuming this is the text area for class name.
     const classDescription = document.getElementById('classDescription');
     const classAbility = document.getElementById('classAbilities');
 
+    // Ensure the selected class persists across page reloads using localStorage
     const savedClass = localStorage.getItem('selectedClass');
-    if(savedClass && dropdown.querySelector(`option[value="${savedClass}"]`)) {
+    if (savedClass && dropdown.querySelector(`option[value="${savedClass}"]`)) {
         dropdown.value = savedClass;
     }
 
     dropdown.addEventListener('change', function() {
-        const selectedClass = this.value;
-        localStorage.setItem('selectedClass', selectedClass);
-        updateClassInfo(selectedClass, classDescription, classAbility);
+        const selectedClass = this.options[this.selectedIndex].text; // Fetching the text, not the value.
+        localStorage.setItem('selectedClass', this.value); // Saving the selected class's value for persistence.
+        classLabel.value = selectedClass; // Updating the classLabel text area with the selected class name.
+        updateClassInfo(this.value, classDescription, classAbility); // Passing value to update description and abilities.
     });
 
-    dropdown.dispatchEvent(new Event('change'));
+    // Trigger update on page load for the current or saved selection.
+    if (dropdown.value) { // If there's already a selection (including a saved one), use it.
+        dropdown.dispatchEvent(new Event('change'));
+    }
 }
 
 function updateClassInfo(className, descInput, abilitiesInput) {
     const classInfo = getClassInfo(className);
     if (classInfo) {
-        descInput.value = classInfo.description;
-        abilitiesInput.value = classInfo.abilities.join('\n');
+        descInput.value = classInfo.description; // Updating the class description.
+        abilitiesInput.value = classInfo.abilities.join('\n'); // Joining abilities with newline for the textarea.
     } else {
         descInput.value = 'Select a class to see the description.';
         abilitiesInput.value = 'Select a class to see the abilities.';
     }
 }
-
 
 function getClassInfo(className) {
     // Example classesData structure as previously defined
