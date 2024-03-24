@@ -124,15 +124,19 @@ function initializeClassSelection() {
         dropdown.appendChild(option);
     });
 
-    // Function to update inputs based on selected class
     function updateInputs(className) {
         const classInfo = classesData[className];
+        const classDescElement = document.getElementById('classDesc');
+        const classAbilitiesElement = document.getElementById('classAbilities');
+    
         if (classInfo) {
-            classDescInput.value = classInfo.description;
-            classAbilitiesInput.value = classInfo.abilities.map(a => `${a.name}: ${a.ability_description}`).join('; ');
+            // Directly setting the text content for text areas or other text containers
+            classDescElement.textContent = classInfo.description;
+            classAbilitiesElement.textContent = classInfo.abilities.map(a => `${a.name}: ${a.ability_description}`).join('; ');
         } else {
-            classDescInput.value = '';
-            classAbilitiesInput.value = '';
+            // Handling cases where the class does not exist or the default text needs to be shown
+            classDescElement.textContent = 'No information available.';
+            classAbilitiesElement.textContent = 'No information available.';
         }
     }
 
