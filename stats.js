@@ -1,11 +1,101 @@
 document.addEventListener('DOMContentLoaded', function() {
+    initializeRollingMechanics();
     initializeClassSelection();
-    // Assuming dropdown is correctly populated at this point
-    const initialClass = document.getElementById('classDropdown').value;
-    updateInputs(initialClass); // Update with the default or first class
 });
 
+// Initialize rolling mechanics for character stats
+function initializeRollingMechanics() {
+    document.getElementById('reroll-button').addEventListener('click', function() {
+        rollCount--;
+        if (rollCount >= 0) {
+            resetStatsAndShowButtons();
+            document.getElementById('stat-message').textContent = `Stats reset. Roll each stat again. ${rollCount} rerolls left.`;
+        }
+    });
+
+    const stats = ['strength', 'dexterity', 'mind', 'charisma'];
+    stats.forEach(stat => {
+        document.getElementById(`${stat}-button`).addEventListener('click', function() {
+            animateRoll(`${stat}-stat`, `${stat}-modifier`, `${stat}-button`);
+        });
+    });
+}
+
+let rollCount = 3;
+
+function getRandomInt(min, max) {
+    return Math.floor(Math.random() * (max - min + 1) + min);
+}
+
+function rollDice() {
+    return Math.max(8, Array.from({ length: 4 }, () => getRandomInt(1, 6))
+        .sort((a, b) => a - b)
+        .slice(1)
+        .reduce((a, b) => a + b, 0));
+}
+
+function calculateModifier(stat) {
+    return Math.floor((stat - 10) / 2);
+}
+
+function animateRoll(statId, modId, buttonId) {
+    if (document.getElementById(statId).value !== '0') {
+        return;
+    }
+
+    let count = 0;
+    const intervalId = setInterval(() => {
+        if (count >= 10) {
+            clearInterval(intervalId);
+            const finalValue = rollDice();
+            document.getElementById(statId).value = finalValue;
+            document.getElementById(modId).value = calculateModifier(finalValue);
+            document.getElementById(buttonId).style.display = 'none';
+        } else {
+            document.getElementById(statId).value = getRandomInt(1, 18);
+        }
+        count++;
+    }, 100);
+}
+
+function resetStatsAndShowButtons() {
+    ['strength', 'dexterity', 'mind', 'charisma'].forEach(stat => {
+        document.getElementById(`${stat}-stat`).value = '0';
+        document.getElementById(`${stat}-modifier`).value = '0';
+        document.getElementById(`${stat}-button`).style.display = 'inline-block';
+    });
+}
+
+// Initialize class selection and update class info based on selection
+function initializeClassSelection() {
+    const dropdown = document.getElementById('classDropdown');
+    dropdown.addEventListener('change', function() {
+        updateClassInfo(this.value);
+    });
+
+    // Optionally, initialize the class info if a class is already selected on page load
+    if (dropdown.value) {
+        updateClassInfo(dropdown.value);
+    }
+}
+
+function updateClassInfo(className) {
+    const classDescInput = document.getElementById('classDesc');
+    const classAbilitiesInput = document.getElementById('classAbilities');
+    const classInfo = classesData[className];
+
+    if (classInfo) {
+        classDescInput.value = classInfo.description;
+        classAbilitiesInput.value = classInfo.abilities.map(a => `${a.name}: ${a.ability_description}`).join('; ');
+    } else {
+        classDescInput.value = '';
+        classAbilitiesInput.value = '';
+    }
+}
+
+// Class information
 const classesData = {
+    // Populate with your classesData
     "Juicer": {
         "description": "Light Armor. Experts in extracting essence, adept at getting information or crafting concoctions.",
         "abilities": [
@@ -47,111 +137,3 @@ const classesData = {
         ]
     }
 };
-
-let rollCount = 3;
-
-function getRandomInt(min, max) {
-    return Math.floor(Math.random() * (max - min + 1) + min);
-}
-
-function rollDice() {
-    return Math.max(8, Array.from({ length: 4 }, () => getRandomInt(1, 6))
-        .sort((a, b) => a - b)
-        .slice(1)
-        .reduce((a, b) => a + b, 0));
-}
-
-function calculateModifier(stat) {
-    return Math.floor((stat - 10) / 2);
-}
-
-function animateRoll(statId, modId, buttonId) {
-    if (document.getElementById(statId).value !== '0') {
-        return;
-    }
-
-    let count = 0;
-    const intervalId = setInterval(() => {
-        if (count >= 10) {
-            clearInterval(intervalId);
-            const finalValue = rollDice();
-            document.getElementById(statId).value = finalValue;
-            document.getElementById(modId).value = calculateModifier(finalValue);
-            document.getElementById(buttonId).style.display = 'none'; 
-        } else {
-            document.getElementById(statId).value = getRandomInt(1, 18);
-        }
-        count++;
-    }, 100); 
-}
-
-function resetStatsAndShowButtons() {
-    ['strength', 'dexterity', 'mind', 'charisma'].forEach(stat => {
-        document.getElementById(`${stat}-stat`).value = 0;
-        document.getElementById(`${stat}-modifier`).value = 0;
-        document.getElementById(`${stat}-button`).style.display = ''; 
-    });
-}
-
-function initializeRollingMechanics() {
-    document.getElementById('reroll-button').addEventListener('click', () => {
-        if (rollCount > 0) {
-            rollCount--;
-            resetStatsAndShowButtons();
-            document.getElementById('stat-message').innerText = `Stats reset. Roll each stat again. ${rollCount} rerolls left.`;
-        }
-    });
-
-    ['strength', 'dexterity', 'mind', 'charisma'].forEach(stat => {
-        document.getElementById(`${stat}-button`).addEventListener('click', () => {
-            animateRoll(`${stat}-stat`, `${stat}-modifier`, `${stat}-button`);
-        });
-
-        if (document.getElementById(`${stat}-stat`).value !== '0') {
-            document.getElementById(`${stat}-button`).style.display = 'none';
-        }
-    });
-}
-
-function initializeClassSelection() {
-    const dropdown = document.getElementById('classDropdown');
-    const classDescInput = document.getElementById('classDesc');
-    const classAbilitiesInput = document.getElementById('classAbilities');
-
-    // Populate the dropdown with class options
-    Object.keys(classesData).forEach(className => {
-        const option = document.createElement('option');
-        option.value = className;
-        option.textContent = className;
-        dropdown.appendChild(option);
-    });
-
-    function updateInputs(className) {
-        const classInfo = classesData[className];
-        // Ensure these are targeting <input type="text"> elements
-        const classDescInput = document.getElementById('classDesc');
-        const classAbilitiesInput = document.getElementById('classAbilities');
-    
-        if (classInfo) {
-            // Setting value for <input type="text"> elements
-            classDescInput.value = classInfo.description;
-            // Joining abilities descriptions into a single string
-            classAbilitiesInput.value = classInfo.abilities.map(a => `${a.name}: ${a.ability_description}`).join('; ');
-        } else {
-            // Default text if class info is not found
-            classDescInput.value = 'No information available.';
-            classAbilitiesInput.value = 'No information available.';
-        }
-    }
-    
-    // Event listener for dropdown changes
-    document.getElementById('classDropdown').addEventListener('change', function() {
-        updateInputs(this.value);
-    });
-    
-    // Initialize inputs with the first class information
-    if (dropdown.value) {
-        updateInputs(dropdown.value);
-    }
-}
-
