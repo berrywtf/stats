@@ -48,42 +48,47 @@ function resetStatsAndShowButtons() {
     });
 }
 
+document.addEventListener('DOMContentLoaded', function() {
+    initializeClassSelection();
+});
 
 function initializeClassSelection() {
     const dropdown = document.getElementById('classDropdown');
-    const classLabel = document.getElementById('classLabel'); // Assuming this is a textarea for showing the class name.
-    const classDescription = document.getElementById('classDescription');
-    const classAbility = document.getElementById('classAbilities');
+    const classLabel = document.getElementById('classLabel'); // This targets your textarea
 
-    Object.keys(getClassInfo()).forEach(className => {
+    // Assuming getClassInfo() returns your classes data correctly
+    const classesData = getClassInfo();
+
+    // Populate the dropdown with class names
+    Object.keys(classesData).forEach(className => {
         const option = new Option(className, className);
         dropdown.add(option);
     });
 
+    // Set the initial class based on the textarea content or the first dropdown option
+    const initialClass = classLabel.value.trim() || dropdown.options[0].value;
+    dropdown.value = initialClass;
+    updateClassInfo(initialClass); // Update text areas based on the initial or first class
+
+    // Listen for changes in the dropdown to update the class information
     dropdown.addEventListener('change', function() {
         const selectedClass = this.value;
         classLabel.value = selectedClass; // Update the textarea with the selected class name
-        updateClassInfo(selectedClass, classDescription, classAbility);
+        updateClassInfo(selectedClass); // Update class information based on the new selection
     });
-
-    // Trigger the change event on initialization to load the default class info
-    if (dropdown.options.length > 0) {
-        dropdown.dispatchEvent(new Event('change'));
-    }
 }
 
-function updateClassInfo(className, descInput, abilitiesInput) {
+function updateClassInfo(className) {
     const classInfo = getClassInfo(className);
+    const classDescription = document.getElementById('classDescription');
+    const classAbility = document.getElementById('classAbilities');
 
     if (classInfo) {
-        descInput.value = classInfo.description;
-        abilitiesInput.value = classInfo.abilities.join('\n');
-    } else {
-        descInput.value = 'Select a class to see the description.';
-        abilitiesInput.value = 'Select a class to see the abilities.';
+        // Assuming these are textareas or inputs that need their value updated
+        classDescription.value = classInfo.description;
+        classAbility.value = classInfo.abilities.join('\n');
     }
 }
-
 function getClassInfo(className) {
     // Example classesData structure as previously defined
     const classesData = {
