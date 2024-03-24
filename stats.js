@@ -73,12 +73,15 @@ function initializeClassSelection() {
 
     dropdown.addEventListener('change', function() {
         const newSelectedClass = this.value;
-        localStorage.setItem('selectedClass', newSelectedClass);
-        classLabel.textContent = newSelectedClass;
-        updateClassInfo(newSelectedClass, classDescription, classAbility);
+        // Update the classLabel's text content with the new selection
+        const classLabel = document.getElementById('classLabel');
+        classLabel.textContent = newSelectedClass; // Ensure this line correctly updates the classLabel
+        
+        localStorage.setItem('selectedClass', newSelectedClass); // Save the new selection to localStorage
+        
+        updateClassInfo(newSelectedClass, classDescription, classAbility); // Update class information
     });
-}
-
+    
 function updateClassInfo(className, classDescription, classAbility) {
     const classInfo = getClassInfo(className);
     if (classInfo) {
@@ -139,4 +142,4 @@ function getClassInfo(className = null) {
 return className ? classesData[className] || null : classesData;
         }
 
-        
+
