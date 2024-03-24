@@ -120,7 +120,7 @@ function initializeClassSelection() {
     Object.keys(classesData).forEach(className => {
         const option = document.createElement('option');
         option.value = className;
-        option.textContent = className;
+        option.innerText = className;
         dropdown.appendChild(option);
     });
 
@@ -131,12 +131,12 @@ function initializeClassSelection() {
     
         if (classInfo) {
             // Directly setting the text content for text areas or other text containers
-            classDescElement.textContent = classInfo.description;
-            classAbilitiesElement.textContent = classInfo.abilities.map(a => `${a.name}: ${a.ability_description}`).join('; ');
+            classDescElement.innerText = classInfo.description;
+            classAbilitiesElement.innerText = classInfo.abilities.map(a => `${a.name}: ${a.ability_description}`).join('; ');
         } else {
             // Handling cases where the class does not exist or the default text needs to be shown
-            classDescElement.textContent = 'No information available.';
-            classAbilitiesElement.textContent = 'No information available.';
+            classDescElement.innerText = 'No information available.';
+            classAbilitiesElement.innerText = 'No information available.';
         }
     }
 
