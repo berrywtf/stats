@@ -1,36 +1,7 @@
 document.addEventListener('DOMContentLoaded', function() {
     initializeRollingMechanics();
-    initializeClassSelection();
+    initializeClassSelection(); // Renamed to match the function definition.
 });
-
-function initializeRollingMechanics() {
-    // Attach event listeners to each stat's roll button
-    document.querySelectorAll('[id$="-button"]').forEach(button => {
-        button.addEventListener('click', function() {
-            const statType = button.id.replace('-button', ''); // e.g., 'strength'
-            animateRoll(`${statType}-stat`, `${statType}-modifier`, button.id);
-        });
-    });
-}
-
-function animateRoll(statId, modId, buttonId) {
-    if (document.getElementById(statId).value !== '0') return;
-
-    let count = 0;
-    const intervalId = setInterval(() => {
-        if (count >= 10) {
-            clearInterval(intervalId);
-            const finalValue = rollDice();
-            document.getElementById(statId).value = finalValue;
-            document.getElementById(modId).value = calculateModifier(finalValue);
-            document.getElementById(buttonId).style.display = 'none';
-        } else {
-            document.getElementById(statId).value = getRandomInt(1, 18);
-        }
-        count++;
-    }, 100);
-}
-
 
 let rollCount = 3;
 
@@ -49,6 +20,25 @@ function calculateModifier(stat) {
     return Math.floor((stat - 10) / 2);
 }
 
+function animateRoll(statId, modId, buttonId) {
+    if (document.getElementById(statId).value !== '0') {
+        return;
+    }
+
+    let count = 0;
+    const intervalId = setInterval(() => {
+        if (count >= 10) {
+            clearInterval(intervalId);
+            const finalValue = rollDice();
+            document.getElementById(statId).value = finalValue;
+            document.getElementById(modId).value = calculateModifier(finalValue);
+            document.getElementById(buttonId).style.display = 'none';
+        } else {
+            document.getElementById(statId).value = getRandomInt(1, 18);
+        }
+        count++;
+    }, 100);
+}
 
 function resetStatsAndShowButtons() {
     ['strength', 'dexterity', 'mind', 'charisma'].forEach(stat => {
@@ -58,23 +48,24 @@ function resetStatsAndShowButtons() {
     });
 }
 
-
 function initializeClassSelection() {
     const dropdown = document.getElementById('classDropdown');
-    const classDescription = document.getElementById('classDescription');
-    const classAbility = document.getElementById('classAbility');
+    const descInput = document.getElementById('classDesc');
+    const abilitiesInput = document.getElementById('classAbilities');
 
-    // Set event listener for class selection change
-    dropdown.addEventListener('change', () => {
-        const selectedClass = dropdown.value;
-        const classInfo = getClassInfo(selectedClass);
-        classDescription.value = classInfo ? classInfo.description : 'Select a class to see the description.';
-        classAbility.value = classInfo ? classInfo.abilities.join('\n') : 'Select a class to see the abilities.';
+    dropdown.addEventListener('change', function() {
+        const selectedClass = this.value;
+        updateClassInfo(selectedClass, descInput, abilitiesInput);
     });
 
-    // Trigger the change event manually to initialize the description and abilities on page load
-    dropdown.dispatchEvent(new Event('change'));
+    // Initial update for default selection, if applicable.
+    const initialClass = dropdown.options[dropdown.selectedIndex]?.value;
+    if (initialClass) {
+        updateClassInfo(initialClass, descInput, abilitiesInput);
+    }
 }
+
+
 function updateClassInfo(className, descInput, abilitiesInput) {
     // Clear the current content first to ensure it's empty before adding new content
     descInput.value = '';
