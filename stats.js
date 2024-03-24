@@ -2,70 +2,77 @@ document.addEventListener('DOMContentLoaded', function() {
     initializeRollingMechanics();
     initializeClassSelection();
 });
-let rollCount = 3;
 
-function getRandomInt(min, max) {
-    return Math.floor(Math.random() * (max - min + 1) + min);
-}
+// statRoller.js
+export const statRoller = (() => {
+    let rollCount = 3;
 
-function rollDice() {
-    return Math.max(8, Array.from({ length: 4 }, () => getRandomInt(1, 6))
-        .sort((a, b) => a - b)
-        .slice(1)
-        .reduce((a, b) => a + b, 0));
-}
+    const getRandomInt = (min, max) => {
+        return Math.floor(Math.random() * (max - min + 1) + min);
+    };
 
-function calculateModifier(stat) {
-    return Math.floor((stat - 10) / 2);
-}
+    const rollDice = () => {
+        return Math.max(8, Array.from({ length: 4 }, () => getRandomInt(1, 6))
+            .sort((a, b) => a - b)
+            .slice(1)
+            .reduce((a, b) => a + b, 0));
+    };
 
-function animateRoll(statId, modId, buttonId) {
-    if (document.getElementById(statId).value !== '0') return;
+    const calculateModifier = (stat) => {
+        return Math.floor((stat - 10) / 2);
+    };
 
-    let count = 0;
-    const intervalId = setInterval(() => {
-        if (count >= 10) {
-            clearInterval(intervalId);
-            const finalValue = rollDice();
-            document.getElementById(statId).value = finalValue;
-            document.getElementById(modId).value = calculateModifier(finalValue);
-            document.getElementById(buttonId).style.display = 'none';
-        } else {
-            document.getElementById(statId).value = getRandomInt(1, 18);
-        }
-        count++;
-    }, 100);
-}
+    const animateRoll = (statId, modId, buttonId) => {
+        if (document.getElementById(statId).value !== '0') return;
 
-function resetStatsAndShowButtons() {
-    ['strength', 'dexterity', 'mind', 'charisma'].forEach(stat => {
-        document.getElementById(`${stat}-stat`).value = '0'; // Ensure reset to '0' for proper initialization check
-        document.getElementById(`${stat}-modifier`).value = '0';
-        document.getElementById(`${stat}-button`).style.display = '';
-    });
-}
+        let count = 0;
+        const intervalId = setInterval(() => {
+            if (count >= 10) {
+                clearInterval(intervalId);
+                const finalValue = rollDice();
+                document.getElementById(statId).value = finalValue;
+                document.getElementById(modId).value = calculateModifier(finalValue);
+                document.getElementById(buttonId).style.display = 'none';
+            } else {
+                document.getElementById(statId).value = getRandomInt(1, 18);
+            }
+            count++;
+        }, 100);
+    };
 
-document.getElementById('reroll-button').addEventListener('click', () => {
-    if (rollCount > 0) {
-        rollCount--;
-        resetStatsAndShowButtons();
-        document.getElementById('stat-message').innerText = `Stats reset. Roll each stat again. ${rollCount} rerolls left.`;
-    } else {
-        document.getElementById('stat-message').innerText = "No rerolls left.";
-    }
-});
-
-function initialize() {
-    ['strength', 'dexterity', 'mind', 'charisma'].forEach(stat => {
-        document.getElementById(`${stat}-button`).addEventListener('click', () => {
-            animateRoll(`${stat}-stat`, `${stat}-modifier`, `${stat}-button`);
+    const resetStatsAndShowButtons = () => {
+        ['strength', 'dexterity', 'mind', 'charisma'].forEach(stat => {
+            document.getElementById(`${stat}-stat`).value = '0';
+            document.getElementById(`${stat}-modifier`).value = '0';
+            document.getElementById(`${stat}-button`).style.display = '';
         });
-    });
+    };
 
-    resetStatsAndShowButtons(); // Ensure a clean slate on page load
-}
+    const initialize = () => {
+        document.getElementById('reroll-button').addEventListener('click', () => {
+            if (rollCount > 0) {
+                rollCount--;
+                resetStatsAndShowButtons();
+                document.getElementById('stat-message').innerText = `Stats reset. Roll each stat again. ${rollCount} rerolls left.`;
+            } else {
+                document.getElementById('stat-message').innerText = "No rerolls left.";
+            }
+        });
 
-document.addEventListener('DOMContentLoaded', initialize);
+        ['strength', 'dexterity', 'mind', 'charisma'].forEach(stat => {
+            document.getElementById(`${stat}-button`).addEventListener('click', () => {
+                animateRoll(`${stat}-stat`, `${stat}-modifier`, `${stat}-button`);
+            });
+        });
+
+        resetStatsAndShowButtons(); // Ensure a clean slate on page load
+    };
+
+    return { initialize };
+})();
+
+// Initialize the module when the DOM is fully loaded
+document.addEventListener('DOMContentLoaded', statRoller.initialize);
 
 
 function updateClassInfo(className, descInput, abilitiesInput) {
