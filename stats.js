@@ -48,47 +48,33 @@ function resetStatsAndShowButtons() {
     });
 }
 
-document.addEventListener('DOMContentLoaded', function() {
-    initializeClassSelection();
-});
-
 function initializeClassSelection() {
     const dropdown = document.getElementById('classDropdown');
-    const classLabel = document.getElementById('classLabel'); // This targets your textarea
+    const classLabel = document.getElementById('classLabel'); // Ensuring this is the textarea
 
-    // Assuming getClassInfo() returns your classes data correctly
-    const classesData = getClassInfo();
-
-    // Populate the dropdown with class names
-    Object.keys(classesData).forEach(className => {
+    Object.keys(getClassInfo()).forEach(className => {
         const option = new Option(className, className);
         dropdown.add(option);
     });
 
-    // Set the initial class based on the textarea content or the first dropdown option
-    const initialClass = classLabel.value.trim() || dropdown.options[0].value;
-    dropdown.value = initialClass;
-    updateClassInfo(initialClass); // Update text areas based on the initial or first class
-
     // Listen for changes in the dropdown to update the class information
     dropdown.addEventListener('change', function() {
         const selectedClass = this.value;
-        classLabel.value = selectedClass; // Update the textarea with the selected class name
-        updateClassInfo(selectedClass); // Update class information based on the new selection
+        // Explicitly setting the value of the textarea for classLabel
+        classLabel.value = selectedClass;
+        const classInfo = getClassInfo(selectedClass);
+        document.getElementById('classDescription').value = classInfo.description;
+        document.getElementById('classAbilities').value = classInfo.abilities.join('\n');
     });
-}
 
-function updateClassInfo(className) {
-    const classInfo = getClassInfo(className);
-    const classDescription = document.getElementById('classDescription');
-    const classAbility = document.getElementById('classAbilities');
-
-    if (classInfo) {
-        // Assuming these are textareas or inputs that need their value updated
-        classDescription.value = classInfo.description;
-        classAbility.value = classInfo.abilities.join('\n');
+    // Initialize the dropdown with the first class info or saved selection
+    if(dropdown.options.length > 0) {
+        const initialIndex = dropdown.options.selectedIndex;
+        dropdown.value = dropdown.options[initialIndex].value;
+        dropdown.dispatchEvent(new Event('change')); // To update label and text areas upon initial load
     }
 }
+
 function getClassInfo(className) {
     // Example classesData structure as previously defined
     const classesData = {
