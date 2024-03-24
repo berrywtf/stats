@@ -3,14 +3,23 @@ document.addEventListener('DOMContentLoaded', function() {
     initializeClassSelection();
 });
 
+document.addEventListener('DOMContentLoaded', function() {
+    initializeRollingMechanics();
+    setupResetButton();
+});
+
 function initializeRollingMechanics() {
-    // Attach event listeners to each stat's roll button
     document.querySelectorAll('[id$="-button"]').forEach(button => {
         button.addEventListener('click', function() {
-            const statType = button.id.replace('-button', ''); // e.g., 'strength'
+            const statType = button.id.replace('-button', ''); // Extract stat type from button ID
             animateRoll(`${statType}-stat`, `${statType}-modifier`, button.id);
         });
     });
+}
+
+function setupResetButton() {
+    // Assuming your reset button has an ID of 'reset-button'
+    document.getElementById('reset-button').addEventListener('click', resetStatsAndShowButtons);
 }
 
 let rollCount = 3;
@@ -21,7 +30,7 @@ function getRandomInt(min, max) {
 
 function rollDice() {
     return Math.max(8, Array.from({ length: 4 }, () => getRandomInt(1, 6))
-        .sort((a, b) => a - b)
+        .sort((a, b) => b - a)
         .slice(1)
         .reduce((a, b) => a + b, 0));
 }
@@ -31,30 +40,27 @@ function calculateModifier(stat) {
 }
 
 function animateRoll(statId, modId, buttonId) {
-    if (document.getElementById(statId).value !== '0') {
-        return;
-    }
+    if (document.getElementById(statId).value !== '0') return;
 
     let count = 0;
     const intervalId = setInterval(() => {
+        document.getElementById(statId).value = getRandomInt(1, 18); // Simulate rolling
         if (count >= 10) {
             clearInterval(intervalId);
             const finalValue = rollDice();
             document.getElementById(statId).value = finalValue;
             document.getElementById(modId).value = calculateModifier(finalValue);
-            document.getElementById(buttonId).style.display = 'none';
-        } else {
-            document.getElementById(statId).value = getRandomInt(1, 18);
+            document.getElementById(buttonId).style.display = 'none'; // Hide roll button after final value is set
         }
         count++;
-    }, 100);
+    }, 100); // Adjust speed as needed for desired animation effect
 }
 
 function resetStatsAndShowButtons() {
     ['strength', 'dexterity', 'mind', 'charisma'].forEach(stat => {
         document.getElementById(`${stat}-stat`).value = '0';
         document.getElementById(`${stat}-modifier`).value = '0';
-        document.getElementById(`${stat}-button`).style.display = 'inline-block';
+        document.getElementById(`${stat}-button`).style.display = 'inline-block'; // Show roll button again
     });
 }
 
