@@ -3,15 +3,13 @@ document.addEventListener('DOMContentLoaded', function() {
     initializeClassSelection();
 });
 
-let rollCount = 3;
-
 function getRandomInt(min, max) {
     return Math.floor(Math.random() * (max - min + 1) + min);
 }
 
 function rollDice() {
     return Math.max(8, Array.from({ length: 4 }, () => getRandomInt(1, 6))
-        .sort((a, b) => a - b)
+        .sort((a, b) => b - a)
         .slice(1)
         .reduce((a, b) => a + b, 0));
 }
@@ -49,47 +47,47 @@ function resetStatsAndShowButtons() {
 }
 
 function initializeRollingMechanics() {
-    // Your implementation of stat rolling initialization goes here
-    // This function was mentioned in the original script but not defined
+    // Placeholder for your implementation of stat rolling mechanics
 }
 
 function initializeClassSelection() {
     const dropdown = document.getElementById('classDropdown');
     const classDescription = document.getElementById('classDescription');
     const classAbility = document.getElementById('classAbility');
+    const classLabel = document.getElementById('classLabel');
 
-    // Populate the dropdown with class names
     Object.keys(getClassInfo()).forEach(className => {
         const option = new Option(className, className);
         dropdown.add(option);
     });
 
-    dropdown.addEventListener('change', function() {
-        const selectedClass = this.value;
-        localStorage.setItem('selectedClass', selectedClass);
-        updateClassInfo(selectedClass, classDescription, classAbility);
-    });
+    let selectedClass = localStorage.getItem('selectedClass') || classLabel.textContent.trim();
 
-    // Load saved class selection from localStorage
-    const savedClass = localStorage.getItem('selectedClass');
-    if (savedClass) {
-        dropdown.value = savedClass;
-        updateClassInfo(savedClass, classDescription, classAbility);
-    } else {
-        // Handle initial selection or default case
-        if (dropdown.options.length > 0) {
-            const initialClass = dropdown.options[dropdown.selectedIndex].value;
-            updateClassInfo(initialClass, classDescription, classAbility);
-        }
+    if (!dropdown.querySelector(`option[value="${selectedClass}"]`)) {
+        selectedClass = dropdown.options[0].value;
     }
-}
 
+    dropdown.value = selectedClass;
+    classLabel.textContent = selectedClass;
+    updateClassInfo(selectedClass, classDescription, classAbility);
+
+    dropdown.addEventListener('change', function() {
+        const newSelectedClass = this.value;
+        localStorage.setItem('selectedClass', newSelectedClass);
+        classLabel.textContent = newSelectedClass;
+        updateClassInfo(newSelectedClass, classDescription, classAbility);
+    });
+}
 
 function updateClassInfo(className, classDescription, classAbility) {
     const classInfo = getClassInfo(className);
-
-    classDescription.value = classInfo ? classInfo.description : 'Select a class to see the description.';
-    classAbility.value = classInfo ? classInfo.abilities.join('\n') : 'Select a class to see the abilities.';
+    if (classInfo) {
+        classDescription.value = classInfo.description;
+        classAbility.value = classInfo.abilities.join('\n');
+    } else {
+        classDescription.value = 'Select a class to see the description.';
+        classAbility.value = 'Select a class to see the abilities.';
+    }
 }
 
 function getClassInfo(className = null) {
@@ -131,16 +129,14 @@ function getClassInfo(className = null) {
         Seedcaster: {
             description: "Light Armor. Visionary and strategic, planting the seeds of future success with deep insight and foresight.",
             abilities: [
-                "Seed Manipulation: Control plant growth"
+            "Seed Manipulation: Control plant growth"
             ]
             }
             };
-            // If className is not provided, return all class names for dropdown population
-if (className === null) {
-    return classesData;
-}
 
-// Return class info for the given className, or null if the class doesn't exist
-return classesData[className] || null;
-}
+            // If className is not provided, return all class names for dropdown population.
+// If a specific className is provided, return its details or null if it doesn't exist.
+return className ? classesData[className] || null : classesData;
+        }
 
+        
