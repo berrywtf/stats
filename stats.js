@@ -79,47 +79,48 @@ function updateClassInfo(className, descInput, abilitiesInput) {
 
 function getClassInfo(className) {
     const classesData = {
-        "Juicer": {
-            "description": "Light Armor. Experts in extracting essence, adept at getting information or crafting concoctions.",
-            "abilities": [
+        Juicer: {
+            description: "Light Armor. Experts in extracting essence, adept at getting information or crafting concoctions.",
+            abilities: [
                 "Essence Extraction: Bonus on essence extraction rolls",
                 "Vitality Surge: Create a healing elixir"
             ]
         },
-        "Peeler": {
-            "description": "Medium Armor. Specialize in uncovering hidden layers and secrets, working behind the scenes.",
-            "abilities": [
+        Peeler: {
+            description: "Medium Armor. Specialize in uncovering hidden layers and secrets, working behind the scenes.",
+            abilities: [
                 "Stealth Unveil: Bonus on stealth rolls",
                 "Quick Peel: Swift attack with bonus to hit"
             ]
         },
-        "Slicer": {
-            "description": "Light Armor. Shields. Quick and precise warriors, preferring agility and sharp tactics over brute strength.",
-            "abilities": [
+        Slicer: {
+            description: "Light Armor. Shields. Quick and precise warriors, preferring agility and sharp tactics over brute strength.",
+            abilities: [
                 "Razor Edge: Bonus on attack rolls with bladed weapons",
                 "Swift Strike: Additional attack after downing an opponent"
             ]
         },
-        "Ripener": {
-            "description": "Medium Armor. Masters of growth and nurturing, seen as healers and mentors.",
-            "abilities": [
+        Ripener: {
+            description: "Medium Armor. Masters of growth and nurturing, seen as healers and mentors.",
+            abilities: [
                 "Growth Infusion: Enhance plant growth or healing"
             ]
         },
-        "Harvester": {
-            "description": "Heavy Armor. Shield. Strong and skilled in gathering resources and information, adept at acquiring what is needed.",
-            "abilities": [
+        Harvester: {
+            description: "Heavy Armor. Shield. Strong and skilled in gathering resources and information, adept at acquiring what is needed.",
+            abilities: [
                 "Resourceful Gathering: Bonus on harvesting/gathering rolls",
                 "Hardened Peel: Bonus to armor class"
             ]
         },
-        "Seedcaster": {
-            "description": "Light Armor. Visionary and strategic, planting the seeds of future success with deep insight and foresight.",
-            "abilities": [
+        Seedcaster: {
+            description: "Light Armor. Visionary and strategic, planting the seeds of future success with deep insight and foresight.",
+            abilities: [
                 "Seed Manipulation: Control plant growth"
             ]
         }
     };
+    
 
     return classesData[className] || null;
 }
