@@ -120,26 +120,27 @@ function initializeClassSelection() {
     Object.keys(classesData).forEach(className => {
         const option = document.createElement('option');
         option.value = className;
-        option.innerText = className;
+        option.textContent = className;
         dropdown.appendChild(option);
     });
 
     function updateInputs(className) {
         const classInfo = classesData[className];
-        const classDescElement = document.getElementById('classDesc');
-        const classAbilitiesElement = document.getElementById('classAbilities');
+        // Ensure these are targeting <input type="text"> elements
+        const classDescInput = document.getElementById('classDesc');
+        const classAbilitiesInput = document.getElementById('classAbilities');
     
         if (classInfo) {
-            // Directly setting the text content for text areas or other text containers
-            classDescElement.innerText = classInfo.description;
-            classAbilitiesElement.innerText = classInfo.abilities.map(a => `${a.name}: ${a.ability_description}`).join('; ');
+            // Setting value for <input type="text"> elements
+            classDescInput.value = classInfo.description;
+            // Joining abilities descriptions into a single string
+            classAbilitiesInput.value = classInfo.abilities.map(a => `${a.name}: ${a.ability_description}`).join('; ');
         } else {
-            // Handling cases where the class does not exist or the default text needs to be shown
-            classDescElement.innerText = 'No information available.';
-            classAbilitiesElement.innerText = 'No information available.';
+            // Default text if class info is not found
+            classDescInput.value = 'No information available.';
+            classAbilitiesInput.value = 'No information available.';
         }
     }
-
     // Event listener for dropdown changes
     dropdown.addEventListener('change', function() {
         updateInputs(this.value);
