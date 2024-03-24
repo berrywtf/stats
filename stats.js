@@ -145,7 +145,6 @@ function initializeClassSelection() {
            
         };
     
-    
         function populateDropdown() {
             const dropdown = document.getElementById('classDropdown');
             Object.keys(classesData).forEach(className => {
