@@ -69,14 +69,14 @@ function updateClassInfo(className, descInput, abilitiesInput) {
     const classInfo = getClassInfo(className);
 
     if (classInfo) {
-        descInput.value = classInfo.description;
-        abilitiesInput.value = classInfo.abilities.join('\n'); // Join with newline character for textarea
+        descInput.value = classInfo.description; // Assuming descInput is a <input type="text"> or <textarea>
+        // Join abilities with a line break for the <textarea>
+        abilitiesInput.value = classInfo.abilities.join('\n'); // Adjusting for line breaks
     } else {
         descInput.value = 'Select a class to see the description.';
         abilitiesInput.value = 'Select a class to see the abilities.';
     }
 }
-
 
 function getClassInfo(className) {
     const classesData = {
