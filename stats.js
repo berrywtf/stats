@@ -131,36 +131,37 @@ const classesData = {
            
         };
        
-function updateClassDetailsBasedOnLabel(classLabel) {
-    const classInfo = classesData[classLabel];
-
-    if (classInfo) {
-        document.getElementById('classDesc').value = classInfo.description;
-        document.getElementById('classAbilities').value = classInfo.abilities.map(ability => `${ability.name}: ${ability.ability_description}`).join('; ');
-    } else {
-        document.getElementById('classDesc').value = 'No information available.';
-        document.getElementById('classAbilities').value = 'No information available.';
-    }
-}
-
 function initializeClassSelection() {
     const dropdown = document.getElementById('classDropdown');
-    Object.keys(classesData).forEach(className => {
+    const classDescInput = document.getElementById('classDesc');
+    const classAbilitiesInput = document.getElementById('classAbilities');
+
+    // Populate the dropdown with class options
+    for (const className in classesData) {
         const option = document.createElement('option');
         option.value = className;
         option.textContent = className;
         dropdown.appendChild(option);
-    });
+    }
 
+    // Function to update inputs based on selected class
+    function updateInputs(className) {
+        const classInfo = classesData[className];
+        if (!classInfo) {
+            classDescInput.value = '';
+            classAbilitiesInput.value = '';
+            return;
+        }
+
+        classDescInput.value = classInfo.description;
+        classAbilitiesInput.value = classInfo.abilities.map(a => `${a.name}: ${a.ability_description}`).join('; ');
+    }
+
+    // Event listener for dropdown changes
     dropdown.addEventListener('change', function() {
-        updateClassDetailsBasedOnLabel(this.value);
+        updateInputs(this.value);
     });
 
-    // Initial update based on current selection or default
-    updateClassDetailsBasedOnLabel(dropdown.value);
+    // Optionally, update inputs based on the first option or a default
+    updateInputs(dropdown.value);
 }
-
-document.addEventListener('DOMContentLoaded', function() {
-    initializeRollingMechanics();
-    initializeClassSelection();
-});
