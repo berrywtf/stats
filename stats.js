@@ -148,18 +148,21 @@ function initializeClassSelection() {
         function updateClassDetailsBasedOnLabel() {
             const classLabel = document.getElementById('classLabel').textContent;
             const classInfo = classesData[classLabel];
-    
+        
             if (classLabel && classLabel !== 'Description' && classInfo) {
-                // Matching class found, update details in input/textarea
-                document.getElementById('classDesc').value = classInfo.description; // Assuming 'classDesc' is now a <textarea> or <input>
-                const abilities = classInfo.abilities.map(ability => `${ability.name}: ${ability.ability_description}`).join('\n');
-                document.getElementById('classAbilities').value = abilities; // Assuming 'classAbilities' is a <textarea>
+                // Assuming 'classDesc' is an <input type="text"> for the description
+                document.getElementById('classDesc').value = classInfo.description;
+        
+                // Concatenate all abilities into a single string for 'classAbilities', an <input type="text">
+                const abilitiesText = classInfo.abilities.map(ability => `${ability.name}: ${ability.ability_description}`).join(', ');
+                document.getElementById('classAbilities').value = abilitiesText;
             } else {
-                // 'Description' or no matching class, show placeholder text in input/textarea
+                // If 'Description' or no matching class, show placeholder text in input fields
                 document.getElementById('classDesc').value = 'No information available.';
                 document.getElementById('classAbilities').value = 'No information available.';
             }
         }
+        
     
         function populateDropdown() {
             const dropdown = document.getElementById('classDropdown');
