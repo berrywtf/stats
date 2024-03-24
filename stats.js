@@ -65,13 +65,14 @@ function initializeClassSelection() {
     }
 }
 
+
 function updateClassInfo(className, descInput, abilitiesInput) {
+    // Simulated getClassInfo() for demonstration
     const classInfo = getClassInfo(className);
 
     if (classInfo) {
-        descInput.value = classInfo.description; // Assuming descInput is a <input type="text"> or <textarea>
-        // Join abilities with a line break for the <textarea>
-        abilitiesInput.value = classInfo.abilities.join('\n'); // Adjusting for line breaks
+        descInput.value = classInfo.description; // Update description input
+        abilitiesInput.value = classInfo.abilities.join('\n'); // Update abilities textarea
     } else {
         descInput.value = 'Select a class to see the description.';
         abilitiesInput.value = 'Select a class to see the abilities.';
@@ -79,6 +80,7 @@ function updateClassInfo(className, descInput, abilitiesInput) {
 }
 
 function getClassInfo(className) {
+    // Example classesData structure as previously defined
     const classesData = {
         Juicer: {
             description: "Light Armor. Experts in extracting essence, adept at getting information or crafting concoctions.",
