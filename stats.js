@@ -70,17 +70,31 @@ function initializeClassSelection() {
     dropdown.value = selectedClass;
     classLabel.textContent = selectedClass;
     updateClassInfo(selectedClass, classDescription, classAbility);
-
+    
     dropdown.addEventListener('change', function() {
         const newSelectedClass = this.value;
-        // Update the classLabel's text content with the new selection
         const classLabel = document.getElementById('classLabel');
-        classLabel.textContent = newSelectedClass; // Ensure this line correctly updates the classLabel
-        
+        classLabel.value = newSelectedClass; // Update the value for the textarea
+    
         localStorage.setItem('selectedClass', newSelectedClass); // Save the new selection to localStorage
         
         updateClassInfo(newSelectedClass, classDescription, classAbility); // Update class information
     });
+    
+    // Initialization and updating based on saved selection or default
+    const savedClass = localStorage.getItem('selectedClass');
+    if (savedClass && dropdown.querySelector(`option[value="${savedClass}"]`)) {
+        dropdown.value = savedClass;
+        const classLabel = document.getElementById('classLabel');
+        classLabel.value = savedClass; // Make sure to use .value for textareas
+        updateClassInfo(savedClass, classDescription, classAbility);
+    } else if (dropdown.options.length > 0) {
+        const initialClass = dropdown.options[0].value;
+        dropdown.value = initialClass;
+        const classLabel = document.getElementById('classLabel');
+        classLabel.value = initialClass; // Use .value for initializing textarea
+        updateClassInfo(initialClass, classDescription, classAbility);
+    }
     
 function updateClassInfo(className, classDescription, classAbility) {
     const classInfo = getClassInfo(className);
