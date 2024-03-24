@@ -144,24 +144,25 @@ function initializeClassSelection() {
                 }
            
         };
+        
         function updateClassDetailsBasedOnLabel() {
             const classLabel = document.getElementById('classLabel').textContent;
             const classInfo = classesData[classLabel];
         
-            if (classLabel && classLabel !== 'Description' && classInfo) {
-                // Fill in the class description in the input field
-                document.getElementById('classDesc').value = classInfo.description;
+            // Locate the input fields for class description and abilities
+            const descInput = document.getElementById('classDesc');
+            const abilitiesInput = document.getElementById('classAbilities');
         
-                // Join abilities into a single line and fill in the input field
-                // This assumes each class has abilities concise enough to fit reasonably in a single line.
-                const abilitiesText = classInfo.abilities.map(ability => `${ability.name}: ${ability.ability_description}`).join('; ');
-                document.getElementById('classAbilities').value = abilitiesText;
+            if (classLabel && classLabel !== 'Description' && classInfo) {
+                // Pre-fill the input fields with class information
+                descInput.value = classInfo.description;
+                abilitiesInput.value = classInfo.abilities.map(ability => `${ability.name}: ${ability.ability_description}`).join('; ');
             } else {
-                // If 'Description' or no matching class, show placeholder text in input fields
-                document.getElementById('classDesc').value = 'No information available.';
-                document.getElementById('classAbilities').value = 'No information available.';
+                // Set placeholder values if no specific class is selected
+                descInput.value = 'No information available.';
+                abilitiesInput.value = 'No information available.';
             }
-        }        
+        }      
     
         function populateDropdown() {
             const dropdown = document.getElementById('classDropdown');
