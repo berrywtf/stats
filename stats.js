@@ -31,12 +31,38 @@ function animateRoll(statId, modId, buttonId) {
     }, 100);
 }
 
-// getRandomInt, rollDice, and calculateModifier functions remain unchanged.
+
+let rollCount = 3;
+
+function getRandomInt(min, max) {
+    return Math.floor(Math.random() * (max - min + 1) + min);
+}
+
+function rollDice() {
+    return Math.max(8, Array.from({ length: 4 }, () => getRandomInt(1, 6))
+        .sort((a, b) => a - b)
+        .slice(1)
+        .reduce((a, b) => a + b, 0));
+}
+
+function calculateModifier(stat) {
+    return Math.floor((stat - 10) / 2);
+}
+
+
+function resetStatsAndShowButtons() {
+    ['strength', 'dexterity', 'mind', 'charisma'].forEach(stat => {
+        document.getElementById(`${stat}-stat`).value = '0';
+        document.getElementById(`${stat}-modifier`).value = '0';
+        document.getElementById(`${stat}-button`).style.display = 'inline-block';
+    });
+}
+
 
 function initializeClassSelection() {
     const dropdown = document.getElementById('classDropdown');
     const classDescription = document.getElementById('classDescription');
-    const classAbility = document.getElementById('classAbilities');
+    const classAbility = document.getElementById('classAbility');
 
     // Set event listener for class selection change
     dropdown.addEventListener('change', () => {
@@ -49,6 +75,24 @@ function initializeClassSelection() {
     // Trigger the change event manually to initialize the description and abilities on page load
     dropdown.dispatchEvent(new Event('change'));
 }
+function updateClassInfo(className, descInput, abilitiesInput) {
+    // Clear the current content first to ensure it's empty before adding new content
+    descInput.value = '';
+    abilitiesInput.value = '';
+
+    const classInfo = getClassInfo(className);
+
+    if (classInfo) {
+        // Set the inputs to the new class's description and abilities
+        descInput.value = classInfo.description;
+        abilitiesInput.value = classInfo.abilities.join('\n'); // Use '\n' for line breaks in textarea
+    } else {
+        // Handle cases where classInfo is null (e.g., default or invalid selection)
+        descInput.value = 'Select a class to see the description.';
+        abilitiesInput.value = 'Select a class to see the abilities.';
+    }
+}
+
 
 function getClassInfo(className) {
     // Example classesData structure as previously defined
