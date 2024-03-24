@@ -1,6 +1,8 @@
 document.addEventListener('DOMContentLoaded', function() {
-    initializeRollingMechanics();
     initializeClassSelection();
+    // Assuming dropdown is correctly populated at this point
+    const initialClass = document.getElementById('classDropdown').value;
+    updateInputs(initialClass); // Update with the default or first class
 });
 
 const classesData = {
@@ -141,13 +143,15 @@ function initializeClassSelection() {
             classAbilitiesInput.value = 'No information available.';
         }
     }
+    
     // Event listener for dropdown changes
-    dropdown.addEventListener('change', function() {
+    document.getElementById('classDropdown').addEventListener('change', function() {
         updateInputs(this.value);
     });
-
+    
     // Initialize inputs with the first class information
     if (dropdown.value) {
         updateInputs(dropdown.value);
     }
 }
+
