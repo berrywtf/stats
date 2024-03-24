@@ -51,7 +51,7 @@ function resetStatsAndShowButtons() {
 function initializeClassSelection() {
     const dropdown = document.getElementById('classDropdown');
     const descInput = document.getElementById('classDesc');
-    const abilitiesInput = document.getElementById('classAbilities');
+    const abilitiesInput = document.getElementById('classAbility');
 
     dropdown.addEventListener('change', function() {
         const selectedClass = this.value;
