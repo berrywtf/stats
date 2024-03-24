@@ -57,7 +57,7 @@ function initializeClassSelection() {
     const dropdown = document.getElementById('classDropdown');
     const classDescription = document.getElementById('classDescription');
     const classAbility = document.getElementById('classAbility');
-    const classLabel = document.getElementById('classLabel'); // Get the classLabel element
+    const classLabel = document.getElementById('classLabel'); // Element that dictates which class info to show
 
     // Populate the dropdown with class names
     Object.keys(getClassInfo()).forEach(className => {
@@ -65,32 +65,35 @@ function initializeClassSelection() {
         dropdown.add(option);
     });
 
-    dropdown.addEventListener('change', function() {
-        const selectedClass = this.value;
-        updateClassInfo(selectedClass, classDescription, classAbility);
-        // Optionally update classLabel if needed, e.g., classLabel.textContent = selectedClass;
-    });
+    // Initialize based on classLabel's content
+    const labelClass = classLabel.textContent.trim();
+    const classInfo = getClassInfo(labelClass);
 
-    // Set the dropdown value to match classLabel's text, if it exists and matches an option
-    if (classLabel && classLabel.textContent) {
-        const classLabelText = classLabel.textContent.trim();
-        if (dropdown.querySelector(`option[value="${classLabelText}"]`)) {
-            dropdown.value = classLabelText;
-        }
+    if (classInfo) {
+        // Update text areas directly from classLabel, bypassing dropdown state
+        updateClassInfo(labelClass, classDescription, classAbility);
+    } else {
+        // Fallback if no class matches classLabel
+        console.error("No class information found for:", labelClass);
     }
 
-    // After setting the dropdown (or not, if classLabel doesn't match), update class info
-    const selectedClass = dropdown.value;
-    updateClassInfo(selectedClass, classDescription, classAbility);
+    // Listener to update classLabel and text areas when dropdown changes
+    dropdown.addEventListener('change', function() {
+        const selectedClass = this.value;
+        classLabel.textContent = selectedClass; // Reflect the new selection in classLabel
+        updateClassInfo(selectedClass, classDescription, classAbility);
+    });
 }
-
-
 
 function updateClassInfo(className, classDescription, classAbility) {
     const classInfo = getClassInfo(className);
-
-    classDescription.value = classInfo ? classInfo.description : 'Select a class to see the description.';
-    classAbility.value = classInfo ? classInfo.abilities.join('\n') : 'Select a class to see the abilities.';
+    if (classInfo) {
+        classDescription.value = classInfo.description;
+        classAbility.value = classInfo.abilities.join('\n');
+    } else {
+        classDescription.value = 'Select a class to see the description.';
+        classAbility.value = 'Select a class to see the abilities.';
+    }
 }
 
 function getClassInfo(className = null) {
