@@ -63,28 +63,14 @@ function initializeRollingMechanics() {
     });
 }
 
-document.addEventListener('DOMContentLoaded', function() {
-    initializeRollingMechanics();
-    initializeClassSelection();
-});
-
-function initializeClassSelection() {
-    const classesData = {
-                "Juicer": {
-                    "description": "Light Armor. Experts in extracting essence, adept at getting information or crafting concoctions.",
-                    "abilities": [
-                        {
-                            "name": "Essence Extraction",
-                            "ability_description": "Bonus on essence extraction rolls",
-            
-                        },
-                        {
-                            "name": "Vitality Surge",
-                            "ability_description": "Create a healing elixir",
-                       
-                        }
-                    ]
-                },
+const classesData = {
+    "Juicer": {
+        "description": "Light Armor. Experts in extracting essence, adept at getting information or crafting concoctions.",
+        "abilities": [
+            {"name": "Essence Extraction", "ability_description": "Bonus on essence extraction rolls"},
+            {"name": "Vitality Surge", "ability_description": "Create a healing elixir"}
+        ]
+    },
                 "Peeler": {
                     "description": "Medium Armor. Specialize in uncovering hidden layers and secrets, working behind the scenes.",
                     "abilities": [
@@ -144,47 +130,37 @@ function initializeClassSelection() {
                 }
            
         };
-        
-        function updateClassDetailsBasedOnLabel() {
-            const classLabel = document.getElementById('classLabel').textContent;
-            const classInfo = classesData[classLabel];
-        
-            // Locate the input fields for class description and abilities
-            const descInput = document.getElementById('classDesc');
-            const abilitiesInput = document.getElementById('classAbilities');
-        
-            if (classLabel && classLabel !== 'Description' && classInfo) {
-                // Pre-fill the input fields with class information
-                descInput.value = classInfo.description;
-                abilitiesInput.value = classInfo.abilities.map(ability => `${ability.name}: ${ability.ability_description}`).join('; ');
-            } else {
-                // Set placeholder values if no specific class is selected
-                descInput.value = 'No information available.';
-                abilitiesInput.value = 'No information available.';
-            }
-        }      
-    
-        function populateDropdown() {
-            const dropdown = document.getElementById('classDropdown');
-            Object.keys(classesData).forEach(className => {
-                const option = document.createElement('option');
-                option.value = className;
-                option.textContent = className;
-                dropdown.appendChild(option);
-            });
-        }
-    
-        populateDropdown();
-        updateClassDetailsBasedOnLabel(); // Use classLabel to update info
-    
-        document.getElementById('classDropdown').addEventListener('change', function() {
-            const selectedClassName = this.value;
-            document.getElementById('classLabel').textContent = selectedClassName; // Update classLabel based on dropdown change
-            updateClassDetailsBasedOnLabel(); // Refresh details using the updated classLabel
-        });
+       
+function updateClassDetailsBasedOnLabel(classLabel) {
+    const classInfo = classesData[classLabel];
+
+    if (classInfo) {
+        document.getElementById('classDesc').value = classInfo.description;
+        document.getElementById('classAbilities').value = classInfo.abilities.map(ability => `${ability.name}: ${ability.ability_description}`).join('; ');
+    } else {
+        document.getElementById('classDesc').value = 'No information available.';
+        document.getElementById('classAbilities').value = 'No information available.';
     }
-    
-    document.addEventListener('DOMContentLoaded', function() {
-        initializeClassSelection();
-        initializeRollingMechanics(); // Ensure other initializations are called
+}
+
+function initializeClassSelection() {
+    const dropdown = document.getElementById('classDropdown');
+    Object.keys(classesData).forEach(className => {
+        const option = document.createElement('option');
+        option.value = className;
+        option.textContent = className;
+        dropdown.appendChild(option);
     });
+
+    dropdown.addEventListener('change', function() {
+        updateClassDetailsBasedOnLabel(this.value);
+    });
+
+    // Initial update based on current selection or default
+    updateClassDetailsBasedOnLabel(dropdown.value);
+}
+
+document.addEventListener('DOMContentLoaded', function() {
+    initializeRollingMechanics();
+    initializeClassSelection();
+});
