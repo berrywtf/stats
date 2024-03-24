@@ -1,9 +1,7 @@
 document.addEventListener('DOMContentLoaded', function() {
     initializeRollingMechanics();
-    initializeClassSelection(); // Renamed to match the function definition.
+    initializeClassSelection();
 });
-
-let rollCount = 3;
 
 function getRandomInt(min, max) {
     return Math.floor(Math.random() * (max - min + 1) + min);
@@ -11,7 +9,7 @@ function getRandomInt(min, max) {
 
 function rollDice() {
     return Math.max(8, Array.from({ length: 4 }, () => getRandomInt(1, 6))
-        .sort((a, b) => a - b)
+        .sort((a, b) => b - a)
         .slice(1)
         .reduce((a, b) => a + b, 0));
 }
@@ -48,29 +46,36 @@ function resetStatsAndShowButtons() {
     });
 }
 
+function initializeRollingMechanics() {
+    // Attach event listeners to roll buttons for each stat
+    ['strength', 'dexterity', 'mind', 'charisma'].forEach(stat => {
+        const buttonId = `${stat}-button`;
+        document.getElementById(buttonId).addEventListener('click', function() {
+            animateRoll(`${stat}-stat`, `${stat}-modifier`, buttonId);
+        });
+    });
+
+    // Optionally, add here any initialization for other rolling mechanics or UI elements
+}
+
 function initializeClassSelection() {
     const dropdown = document.getElementById('classDropdown');
     const classDescription = document.getElementById('classDescription');
     const classAbility = document.getElementById('classAbilities');
 
-    // Retrieve the last selected class from localStorage, if available
+    // Retrieve and set the last selected class from localStorage
     const savedClass = localStorage.getItem('selectedClass');
-
-    // If there's a saved selection and it's an option in the dropdown, use it
-    if(savedClass && dropdown.querySelector(`option[value="${savedClass}"]`)) {
+    if (savedClass && dropdown.querySelector(`option[value="${savedClass}"]`)) {
         dropdown.value = savedClass;
     }
 
-    // Listen for changes in the dropdown to update the class information and save the selection
     dropdown.addEventListener('change', function() {
         const selectedClass = this.value;
-        // Save the selected class to localStorage
-        localStorage.setItem('selectedClass', selectedClass);
-        // Update the description and abilities text areas
+        localStorage.setItem('selectedClass', selectedClass); // Save selection to localStorage
         updateClassInfo(selectedClass, classDescription, classAbility);
     });
 
-    // Trigger the change event to update the text areas based on the current or saved selection
+    // Manually trigger update on page load for the selected or first class
     dropdown.dispatchEvent(new Event('change'));
 }
 
