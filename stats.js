@@ -1,7 +1,9 @@
 document.addEventListener('DOMContentLoaded', function() {
     initializeRollingMechanics();
-    initializeClassSelection();
+    initializeClassSelection(); // Renamed to match the function definition.
 });
+
+let rollCount = 3;
 
 function getRandomInt(min, max) {
     return Math.floor(Math.random() * (max - min + 1) + min);
@@ -9,7 +11,7 @@ function getRandomInt(min, max) {
 
 function rollDice() {
     return Math.max(8, Array.from({ length: 4 }, () => getRandomInt(1, 6))
-        .sort((a, b) => b - a)
+        .sort((a, b) => a - b)
         .slice(1)
         .reduce((a, b) => a + b, 0));
 }
@@ -46,49 +48,42 @@ function resetStatsAndShowButtons() {
     });
 }
 
-function initializeRollingMechanics() {
-    // Attach event listeners to roll buttons for each stat
-    ['strength', 'dexterity', 'mind', 'charisma'].forEach(stat => {
-        const buttonId = `${stat}-button`;
-        document.getElementById(buttonId).addEventListener('click', function() {
-            animateRoll(`${stat}-stat`, `${stat}-modifier`, buttonId);
-        });
-    });
-
-    // Optionally, add here any initialization for other rolling mechanics or UI elements
-}
-
 function initializeClassSelection() {
     const dropdown = document.getElementById('classDropdown');
-    const classDescription = document.getElementById('classDescription');
-    const classAbility = document.getElementById('classAbilities');
-
-    // Retrieve and set the last selected class from localStorage
-    const savedClass = localStorage.getItem('selectedClass');
-    if (savedClass && dropdown.querySelector(`option[value="${savedClass}"]`)) {
-        dropdown.value = savedClass;
-    }
+    const descInput = document.getElementById('classDesc');
+    const abilitiesInput = document.getElementById('classAbilities');
 
     dropdown.addEventListener('change', function() {
         const selectedClass = this.value;
-        localStorage.setItem('selectedClass', selectedClass); // Save selection to localStorage
-        updateClassInfo(selectedClass, classDescription, classAbility);
+        updateClassInfo(selectedClass, descInput, abilitiesInput);
     });
 
-    // Manually trigger update on page load for the selected or first class
-    dropdown.dispatchEvent(new Event('change'));
+    // Initial update for default selection, if applicable.
+    const initialClass = dropdown.options[dropdown.selectedIndex]?.value;
+    if (initialClass) {
+        updateClassInfo(initialClass, descInput, abilitiesInput);
+    }
 }
 
+
 function updateClassInfo(className, descInput, abilitiesInput) {
+    // Clear the current content first to ensure it's empty before adding new content
+    descInput.value = '';
+    abilitiesInput.value = '';
+
     const classInfo = getClassInfo(className);
+
     if (classInfo) {
+        // Set the inputs to the new class's description and abilities
         descInput.value = classInfo.description;
-        abilitiesInput.value = classInfo.abilities.join('\n');
+        abilitiesInput.value = classInfo.abilities.join('\n'); // Use '\n' for line breaks in textarea
     } else {
+        // Handle cases where classInfo is null (e.g., default or invalid selection)
         descInput.value = 'Select a class to see the description.';
         abilitiesInput.value = 'Select a class to see the abilities.';
     }
 }
+
 
 function getClassInfo(className) {
     // Example classesData structure as previously defined
