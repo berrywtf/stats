@@ -87,9 +87,9 @@ document.addEventListener('DOMContentLoaded', function() {
 
     function updateClassDetails(className) {
         const classInfo = classesData[className];
-        document.getElementById('classDesc').textContent = classInfo.description;
+        document.getElementById('classDescription').textContent = classInfo.description;
 
-        const abilitiesList = document.getElementById('classAbilities');
+        const abilitiesList = document.getElementById('classAbility');
         abilitiesList.innerHTML = ''; // Clear existing abilities
         classInfo.abilities.forEach(ability => {
             const li = document.createElement('li');
