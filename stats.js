@@ -1,5 +1,45 @@
 export const statRoller = (() => {
 
+    document.addEventListener('DOMContentLoaded', function() {
+        initializeRollingMechanics();
+        initializeClassSelection();
+    });
+    
+    // The rolling mechanics functions remain unchanged.
+    
+    function initializeClassSelection() {
+        const dropdown = document.getElementById('classDropdown');
+        const classLabelInput = document.getElementById('classLabel'); // Now targeting a text input
+        const classDescription = document.getElementById('classDescription');
+        const classAbility = document.getElementById('classAbilities');
+    
+        // Loading the saved class selection from localStorage
+        const savedClass = localStorage.getItem('selectedClass');
+        if(savedClass && dropdown.querySelector(`option[value="${savedClass}"]`)) {
+            dropdown.value = savedClass;
+        }
+    
+        dropdown.addEventListener('change', function() {
+            const selectedClass = this.options[this.selectedIndex].text; // Using option text for display
+            localStorage.setItem('selectedClass', this.value); // Storing the selected class value for persistence
+            classLabelInput.value = selectedClass; // Updating the text input to display the selected class name
+            updateClassInfo(this.value, classDescription, classAbility);
+        });
+    
+        // Manually trigger the change event on page load to update UI elements based on the current or saved selection
+        dropdown.dispatchEvent(new Event('change'));
+    }
+    
+    function updateClassInfo(className, descInput, abilitiesInput) {
+        const classInfo = getClassInfo(className);
+        if (classInfo) {
+            descInput.value = classInfo.description;
+            abilitiesInput.value = classInfo.abilities.join('\n');
+        } else {
+            descInput.value = 'Select a class to see the description.';
+            abilitiesInput.value = 'Select a class to see the abilities.';
+        }
+    }
 
     const classesData = {
         Juicer: {
@@ -44,37 +84,4 @@ export const statRoller = (() => {
         }
     };
      
-    const updateClassInfo = (className) => {
-        const classInfo = classesData[className];
-        const descElement = document.getElementById('classDescription');
-        const abilitiesElement = document.getElementById('classAbility');
-
-        descElement.textContent = classInfo?.description || 'Select a class to see the description.';
-        abilitiesElement.innerHTML = classInfo?.abilities.map(ability => `<li>${ability}</li>`).join('') || '<li>Select a class to see the abilities.</li>';
-    };
-
-    const initializeClassSelection = () => {
-        const dropdown = document.getElementById('classDropdown');
-
-        Object.keys(classesData).forEach(className => {
-            const option = document.createElement('option');
-            option.value = className;
-            option.textContent = className;
-            dropdown.appendChild(option);
-        });
-
-        dropdown.addEventListener('change', () => {
-            updateClassInfo(dropdown.value);
-        });
-
-        // Initial update for the first selection
-        if (dropdown.value) updateClassInfo(dropdown.value);
-    };
-
-    const initialize = () => {
-        initializeRollingMechanics();
-        initializeClassSelection();
-    };
-
-    return { initialize };
-})();
+});
