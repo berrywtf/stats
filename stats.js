@@ -1,32 +1,24 @@
 export const statRoller = (() => {
-
     document.addEventListener('DOMContentLoaded', function() {
-        initializeRollingMechanics();
         initializeClassSelection();
     });
-    
-    // The rolling mechanics functions remain unchanged.
-    
+
     function initializeClassSelection() {
         const dropdown = document.getElementById('classDropdown');
-        const classLabelInput = document.getElementById('classLabel'); // Now targeting a text input
         const classDescription = document.getElementById('classDescription');
-        const classAbility = document.getElementById('classAbilities');
+        const classAbility = document.getElementById('classAbility');
     
-        // Loading the saved class selection from localStorage
         const savedClass = localStorage.getItem('selectedClass');
         if(savedClass && dropdown.querySelector(`option[value="${savedClass}"]`)) {
             dropdown.value = savedClass;
         }
     
         dropdown.addEventListener('change', function() {
-            const selectedClass = this.options[this.selectedIndex].text; // Using option text for display
-            localStorage.setItem('selectedClass', this.value); // Storing the selected class value for persistence
-            classLabelInput.value = selectedClass; // Updating the text input to display the selected class name
-            updateClassInfo(this.value, classDescription, classAbility);
+            const selectedClass = this.value;
+            localStorage.setItem('selectedClass', selectedClass);
+            updateClassInfo(selectedClass, classDescription, classAbility);
         });
     
-        // Manually trigger the change event on page load to update UI elements based on the current or saved selection
         dropdown.dispatchEvent(new Event('change'));
     }
     
@@ -40,8 +32,9 @@ export const statRoller = (() => {
             abilitiesInput.value = 'Select a class to see the abilities.';
         }
     }
-
-    const classesData = {
+    
+    function getClassInfo(className) {
+        const classesData = {
         Juicer: {
             description: "Light Armor. Experts in extracting essence, adept at getting information or crafting concoctions.",
             abilities: [
@@ -84,4 +77,4 @@ export const statRoller = (() => {
         }
     };
      
-});
+    }});
