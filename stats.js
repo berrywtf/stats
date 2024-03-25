@@ -1,52 +1,8 @@
 document.addEventListener('DOMContentLoaded', function() {
-    initializeRollingMechanics();
+   
     initializeClassSelection(); // Renamed to match the function definition.
 });
 
-let rollCount = 3;
-
-function getRandomInt(min, max) {
-    return Math.floor(Math.random() * (max - min + 1) + min);
-}
-
-function rollDice() {
-    return Math.max(8, Array.from({ length: 4 }, () => getRandomInt(1, 6))
-        .sort((a, b) => a - b)
-        .slice(1)
-        .reduce((a, b) => a + b, 0));
-}
-
-function calculateModifier(stat) {
-    return Math.floor((stat - 10) / 2);
-}
-
-function animateRoll(statId, modId, buttonId) {
-    if (document.getElementById(statId).value !== '0') {
-        return;
-    }
-
-    let count = 0;
-    const intervalId = setInterval(() => {
-        if (count >= 10) {
-            clearInterval(intervalId);
-            const finalValue = rollDice();
-            document.getElementById(statId).value = finalValue;
-            document.getElementById(modId).value = calculateModifier(finalValue);
-            document.getElementById(buttonId).style.display = 'none';
-        } else {
-            document.getElementById(statId).value = getRandomInt(1, 18);
-        }
-        count++;
-    }, 100);
-}
-
-function resetStatsAndShowButtons() {
-    ['strength', 'dexterity', 'mind', 'charisma'].forEach(stat => {
-        document.getElementById(`${stat}-stat`).value = '0';
-        document.getElementById(`${stat}-modifier`).value = '0';
-        document.getElementById(`${stat}-button`).style.display = 'inline-block';
-    });
-}
 
 function initializeClassSelection() {
     const dropdown = document.getElementById('classDropdown');
