@@ -1,89 +1,107 @@
 document.addEventListener('DOMContentLoaded', function() {
-    initializeRollingMechanics();
-    initializeClassSelection();
-});
-
-
-
-function initializeClassSelection() {
-    const dropdown = document.getElementById('classDropdown');
-    const classLabelInput = document.getElementById('classLabel'); // Now targeting a text input
-    const classDescription = document.getElementById('classDescription');
-    const classAbility = document.getElementById('classAbilities');
-
-    // Loading the saved class selection from localStorage
-    const savedClass = localStorage.getItem('selectedClass');
-    if(savedClass && dropdown.querySelector(`option[value="${savedClass}"]`)) {
-        dropdown.value = savedClass;
-    }
-
-    dropdown.addEventListener('change', function() {
-        const selectedClass = this.options[this.selectedIndex].text; // Using option text for display
-        localStorage.setItem('selectedClass', this.value); // Storing the selected class value for persistence
-        classLabelInput.value = selectedClass; // Updating the text input to display the selected class name
-        updateClassInfo(this.value, classDescription, classAbility);
-    });
-
-    // Manually trigger the change event on page load to update UI elements based on the current or saved selection
-    dropdown.dispatchEvent(new Event('change'));
-}
-
-function updateClassInfo(className, descInput, abilitiesInput) {
-    const classInfo = getClassInfo(className);
-    if (classInfo) {
-        descInput.value = classInfo.description;
-        abilitiesInput.value = classInfo.abilities.join('\n');
-    } else {
-        descInput.value = 'Select a class to see the description.';
-        abilitiesInput.value = 'Select a class to see the abilities.';
-    }
-}
-
-function getClassInfo(className) {
-    // Example classesData structure as previously defined
     const classesData = {
-        Juicer: {
-            description: "Light Armor. Experts in extracting essence, adept at getting information or crafting concoctions.",
-            abilities: [
-                "Essence Extraction: Bonus on essence extraction rolls",
-                "Vitality Surge: Create a healing elixir"
+        "Juicer": {
+            "description": "Light Armor. Experts in extracting essence, adept at getting information or crafting concoctions.",
+            "abilities": [
+                {
+                    "name": "Essence Extraction",
+                    "ability_description": "Bonus on essence extraction rolls",
+                    "formula": "mind_modifier + currentLevel"
+                },
+                {
+                    "name": "Vitality Surge",
+                    "ability_description": "Create a healing elixir",
+                    "formula": "currentLevel + mind_modifier",
+                    "uses_per_combat": "1 + (currentLevel / 4)"
+                }
             ]
         },
-        Peeler: {
-            description: "Medium Armor. Specialize in uncovering hidden layers and secrets, working behind the scenes.",
-            abilities: [
-                "Stealth Unveil: Bonus on stealth rolls",
-                "Quick Peel: Swift attack with bonus to hit"
+        "Peeler": {
+            "description": "Medium Armor. Specialize in uncovering hidden layers and secrets, working behind the scenes.",
+            "abilities": [
+                {
+                    "name": "Stealth Unveil",
+                    "ability_description": "Bonus on stealth rolls",
+                },
+                {
+                    "name": "Quick Peel",
+                    "ability_description": "Swift attack with bonus to hit",
+                }
             ]
         },
-        Slicer: {
-            description: "Light Armor. Shields. Quick and precise warriors, preferring agility and sharp tactics over brute strength.",
-            abilities: [
-                "Razor Edge: Bonus on attack rolls with bladed weapons",
-                "Swift Strike: Additional attack after downing an opponent"
+        "Slicer": {
+            "description": "Light Armor. Shields. Quick and precise warriors, preferring agility and sharp tactics over brute strength.",
+            "abilities": [
+                {
+                    "name": "Razor Edge",
+                    "ability_description": "Bonus on attack rolls with bladed weapons",
+                },
+                {
+                    "name": "Swift Strike",
+                    "ability_description": "Additional attack after downing an opponent",
+                }
             ]
         },
-        Ripener: {
-            description: "Medium Armor. Masters of growth and nurturing, seen as healers and mentors.",
-            abilities: [
-                "Growth Infusion: Enhance plant growth or healing"
+        "Ripener": {
+            "description": "Medium Armor. Masters of growth and nurturing, seen as healers and mentors.",
+            "abilities": [
+                {
+                    "name": "Growth Infusion",
+                    "ability_description": "Enhance plant growth or healing",
+                }
             ]
         },
-        Harvester: {
-            description: "Heavy Armor. Shield. Strong and skilled in gathering resources and information, adept at acquiring what is needed.",
-            abilities: [
-                "Resourceful Gathering: Bonus on harvesting/gathering rolls",
-                "Hardened Peel: Bonus to armor class"
+        "Harvester": {
+            "description": "Heavy Armor. Shield. Strong and skilled in gathering resources and information, adept at acquiring what is needed.",
+            "abilities": [
+                {
+                    "name": "Resourceful Gathering",
+                    "ability_description": "Bonus on harvesting/gathering rolls",
+                },
+                {
+                    "name": "Hardened Peel",
+                    "ability_description": "Bonus to armor class.",
+                }
             ]
         },
-        Seedcaster: {
-            description: "Light Armor. Visionary and strategic, planting the seeds of future success with deep insight and foresight.",
-            abilities: [
-                "Seed Manipulation: Control plant growth"
+        "Seedcaster": {
+            "description": "Light Armor. Visionary and strategic, planting the seeds of future success with deep insight and foresight.",
+            "abilities": [
+                {
+                    "name": "Seed Manipulation",
+                    "ability_description": "Control plant growth",
+                }
             ]
         }
     };
-    
 
-    return classesData[className] || null;
-}
+    function populateDropdown() {
+        const dropdown = document.getElementById('classDropdown');
+        Object.keys(classesData).forEach(className => {
+            const option = document.createElement('option');
+            option.value = className;
+            option.textContent = className;
+            dropdown.appendChild(option);
+        });
+    }
+
+    function updateClassDetails(className) {
+        const classInfo = classesData[className];
+        document.getElementById('classDesc').textContent = classInfo.description;
+
+        const abilitiesList = document.getElementById('classAbilities');
+        abilitiesList.innerHTML = ''; // Clear existing abilities
+        classInfo.abilities.forEach(ability => {
+            const li = document.createElement('li');
+            li.textContent = `${ability.name}: ${ability.ability_description}`;
+            abilitiesList.appendChild(li);
+        });
+    }
+
+    document.getElementById('classDropdown').addEventListener('change', function() {
+        updateClassDetails(this.value);
+    });
+
+    populateDropdown();
+    updateClassDetails(document.getElementById('classDropdown').value); // Initialize with the first class
+});
