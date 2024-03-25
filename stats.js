@@ -1,7 +1,8 @@
 document.addEventListener('DOMContentLoaded', function() {
     initializeRollingMechanics();
-    initializeClassSelection(); // Renamed to match the function definition.
+    initializeClassSelection();
 });
+
 
 let rollCount = 3;
 
@@ -21,69 +22,96 @@ function calculateModifier(stat) {
 }
 
 function animateRoll(statId, modId, buttonId) {
+    // Early return if stat already rolled
     if (document.getElementById(statId).value !== '0') {
         return;
     }
 
     let count = 0;
     const intervalId = setInterval(() => {
-        if (count >= 10) {
+        if (count >= 10) { // Stop the animation after 10 cycles
             clearInterval(intervalId);
             const finalValue = rollDice();
             document.getElementById(statId).value = finalValue;
             document.getElementById(modId).value = calculateModifier(finalValue);
-            document.getElementById(buttonId).style.display = 'none';
+            document.getElementById(buttonId).style.display = 'none'; // Hide button after rolling
         } else {
+            // Show random numbers during the "rolling"
             document.getElementById(statId).value = getRandomInt(1, 18);
         }
         count++;
-    }, 100);
+    }, 100); // Adjust the speed of "rolling" here
 }
 
 function resetStatsAndShowButtons() {
     ['strength', 'dexterity', 'mind', 'charisma'].forEach(stat => {
-        document.getElementById(`${stat}-stat`).value = '0';
-        document.getElementById(`${stat}-modifier`).value = '0';
-        document.getElementById(`${stat}-button`).style.display = 'inline-block';
+        document.getElementById(`${stat}-stat`).value = 0;
+        document.getElementById(`${stat}-modifier`).value = 0;
+        document.getElementById(`${stat}-button`).style.display = ''; // Show button again for reroll
     });
 }
+
+document.getElementById('reroll-button').addEventListener('click', () => {
+    if (rollCount > 0) {
+        rollCount--;
+        resetStatsAndShowButtons();
+        document.getElementById('stat-message').innerText = `Stats reset. Roll each stat again. ${rollCount} rerolls left.`;
+    }
+});
+
+function initialize() {
+    // Attach event listeners to each stat button for rolling
+    ['strength', 'dexterity', 'mind', 'charisma'].forEach(stat => {
+        document.getElementById(`${stat}-button`).addEventListener('click', () => {
+            animateRoll(`${stat}-stat`, `${stat}-modifier`, `${stat}-button`);
+        });
+
+        // Hide the roll button if the stat already has a value
+        if (document.getElementById(`${stat}-stat`).value !== '0') {
+            document.getElementById(`${stat}-button`).style.display = 'none';
+        }
+    });
+
+    // Optionally, call resetStatsAndShowButtons() here if you want to reset everything on page load.
+    // resetStatsAndShowButtons(); // Uncomment this line if you want to start with a clean slate every time the page loads.
+}
+
+// Initial setup to configure buttons based on current stat values
+document.addEventListener('DOMContentLoaded', initialize);
 
 function initializeClassSelection() {
     const dropdown = document.getElementById('classDropdown');
-    const descInput = document.getElementById('classDescription');
-    const abilitiesInput = document.getElementById('classAbility');
+    const classLabelInput = document.getElementById('classLabel'); // Now targeting a text input
+    const classDescription = document.getElementById('classDescription');
+    const classAbility = document.getElementById('classAbilities');
+
+    // Loading the saved class selection from localStorage
+    const savedClass = localStorage.getItem('selectedClass');
+    if(savedClass && dropdown.querySelector(`option[value="${savedClass}"]`)) {
+        dropdown.value = savedClass;
+    }
 
     dropdown.addEventListener('change', function() {
-        const selectedClass = this.value;
-        updateClassInfo(selectedClass, descInput, abilitiesInput);
+        const selectedClass = this.options[this.selectedIndex].text; // Using option text for display
+        localStorage.setItem('selectedClass', this.value); // Storing the selected class value for persistence
+        classLabelInput.value = selectedClass; // Updating the text input to display the selected class name
+        updateClassInfo(this.value, classDescription, classAbility);
     });
 
-    // Initial update for default selection, if applicable.
-    const initialClass = dropdown.options[dropdown.selectedIndex]?.value;
-    if (initialClass) {
-        updateClassInfo(initialClass, descInput, abilitiesInput);
-    }
+    // Manually trigger the change event on page load to update UI elements based on the current or saved selection
+    dropdown.dispatchEvent(new Event('change'));
 }
 
-
 function updateClassInfo(className, descInput, abilitiesInput) {
-    // Clear the current content first to ensure it's empty before adding new content
-    descInput.value = '';
-    abilitiesInput.value = '';
-
     const classInfo = getClassInfo(className);
-
     if (classInfo) {
-        // Set the inputs to the new class's description and abilities
         descInput.value = classInfo.description;
-        abilitiesInput.value = classInfo.abilities.join('\n'); // Use '\n' for line breaks in textarea
+        abilitiesInput.value = classInfo.abilities.join('\n');
     } else {
-        // Handle cases where classInfo is null (e.g., default or invalid selection)
         descInput.value = 'Select a class to see the description.';
         abilitiesInput.value = 'Select a class to see the abilities.';
     }
 }
-
 
 function getClassInfo(className) {
     // Example classesData structure as previously defined
