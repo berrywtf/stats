@@ -130,24 +130,26 @@ export const statRoller = (() => {
 
         resetStatsAndShowButtons(); // Ensure a clean slate on page load
     };
-    
+
     const updateClassInfo = (className) => {
         const classInfo = classesData[className];
         const descElement = document.getElementById('classDescription');
         const abilitiesElement = document.getElementById('classAbility');
     
-        // Update the description
+        // Clears previous content and updates the description. If there's no description for the class,
+        // it falls back to 'Select a class to see the description.'
         descElement.textContent = classInfo?.description || 'Select a class to see the description.';
     
-        // Check if classInfo and abilities exist
+        // Clears previous content and updates the abilities.
+        // If the class has abilities, it formats each ability as 'name: description' and joins them with new lines.
+        // If there are no abilities for the class, it falls back to 'Select a class to see the abilities.'
         if (classInfo && classInfo.abilities) {
-            // Map through each ability, format them as plain text
             const abilitiesText = classInfo.abilities.map(ability => 
                 `${ability.name}: ${ability.ability_description}`
-            ).join('\n'); // Join the formatted abilities with newline characters
-            abilitiesElement.value = abilitiesText;
+            ).join('\n'); // Formats and combines the abilities into a single string, separated by new lines.
+            abilitiesElement.value = abilitiesText; // Updates the textarea with the formatted abilities.
         } else {
-            abilitiesElement.value = 'Select a class to see the abilities.';
+            abilitiesElement.value = 'Select a class to see the abilities.'; // Sets a default message if there are no abilities.
         }
     };
 
