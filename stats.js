@@ -137,10 +137,10 @@ export const statRoller = (() => {
         const abilitiesElement = document.getElementById('classAbility');
 
         descElement.textContent = ''; // Clear the description text
-        abilitiesElement.value = ''; // Clear the abilities text
+        abilitiesElement.innerHTML = ''; // Clear the abilities text
 
         descElement.textContent = classInfo?.description || 'Select a class to see the description.';
-        abilitiesElement.value = classInfo?.abilities.map(ability => `${ability}`).join('') || 'Select a class to see the abilities.';
+        abilitiesElement.innerHTML = classInfo?.abilities.map(ability => `${ability}`).join('') || 'Select a class to see the abilities.';
     };
 
     const initializeClassSelection = () => {
