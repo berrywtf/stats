@@ -136,10 +136,20 @@ export const statRoller = (() => {
         const descElement = document.getElementById('classDescription');
         const abilitiesElement = document.getElementById('classAbility');
 
-        descElement.textContent = classInfo?.description || 'Select a class to see the description.';
-        abilitiesElement.value = classInfo?.abilities.join('\n') || 'Select a class to see the abilities.';
-    };
+    // Update the description
+    descElement.textContent = classInfo?.description || 'Select a class to see the description.';
 
+    // Check if classInfo and abilities exist
+    if (classInfo && classInfo.abilities) {
+        // Map through each ability, removing HTML tags
+        const cleanAbilities = classInfo.abilities.map(ability =>
+            ability.replace(/<\/?li>/g, "") // Specifically target <li> and </li> tags for removal
+        ).join('\n'); // Join the cleaned abilities with newline characters
+        abilitiesElement.value = cleanAbilities;
+    } else {
+        abilitiesElement.value = 'Select a class to see the abilities.';
+    }
+};
     const initializeClassSelection = () => {
         const dropdown = document.getElementById('classDropdown');
 
