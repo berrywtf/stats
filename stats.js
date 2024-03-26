@@ -133,11 +133,11 @@ export const statRoller = (() => {
 
     const updateClassInfo = (className) => {
         const classInfo = classesData[className];
-        const descElement = document.getElementById('classDescription');
-        const abilitiesElement = document.getElementById('classAbility');
+        const descElement = document.getElementById('classDescr'); 
+        const abilitiesElement = document.getElementById('classAbi');
 
         descElement.textContent = classInfo?.description || 'Select a class to see the description.';
-        abilitiesElement.innerHTML = classInfo?.abilities.map(ability => `<li>${ability}</li>`).join('') || '<li>Select a class to see the abilities.</li>';
+        abilitiesElement.textContent = classInfo?.abilities.map(ability => `${ability}`).join('') || 'Select a class to see the abilities.';
     };
 
     const initializeClassSelection = () => {
