@@ -138,7 +138,10 @@ export const statRoller = (() => {
         // Always clear previous content
         descElement.value = '';
         abilitiesElement.value = '';
-
+        descElement.textContent = '';
+        abilitiesElement.textContent = '';
+        descElement.innerHTML = '';
+        abilitiesElement.innerHTML = '';
         // Populate with new content or default messages
         if (classInfo) {
             descElement.value = classInfo.description;
@@ -174,4 +177,4 @@ export const statRoller = (() => {
     };
 
     return { initialize };
-})();
+})();.
