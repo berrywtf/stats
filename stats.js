@@ -137,9 +137,17 @@ export const statRoller = (() => {
         const abilitiesElement = document.getElementById('classAbility');
 
         descElement.textContent = classInfo?.description || 'Select a class to see the description.';
-        abilitiesElement.value = classInfo?.abilities.join('\n') || 'Select a class to see the abilities.';
-    };
-
+        
+    // Clean and update the abilities list
+    if (classInfo?.abilities) {
+        const cleanAbilities = classInfo.abilities.map(ability =>
+            ability.replace(/<\/?[^>]+(>|$)/g, "") // Removes HTML tags
+        ).join('\n'); // Joins them with newline character
+        abilitiesElement.value = cleanAbilities;
+    } else {
+        abilitiesElement.value = 'Select a class to see the abilities.';
+    }
+};
     const initializeClassSelection = () => {
         const dropdown = document.getElementById('classDropdown');
 
