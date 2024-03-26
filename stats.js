@@ -132,26 +132,26 @@ export const statRoller = (() => {
     };
 
     const updateClassInfo = (className) => {
-        const classInfo = classesData[className];
-        const descElement = document.getElementById('classDescription');
-        const abilitiesElement = document.getElementById('classAbility');
-    
-        // Clears previous content and updates the description. If there's no description for the class,
-        // it falls back to 'Select a class to see the description.'
-        descElement.textContent = classInfo?.description || 'Select a class to see the description.';
-    
-        // Clears previous content and updates the abilities.
-        // If the class has abilities, it formats each ability as 'name: description' and joins them with new lines.
-        // If there are no abilities for the class, it falls back to 'Select a class to see the abilities.'
-        if (classInfo && classInfo.abilities) {
-            const abilitiesText = classInfo.abilities.map(ability => 
-                `${ability.name}: ${ability.ability_description}`
-            ).join('\n'); // Formats and combines the abilities into a single string, separated by new lines.
-            abilitiesElement.value = abilitiesText; // Updates the textarea with the formatted abilities.
-        } else {
-            abilitiesElement.value = 'Select a class to see the abilities.'; // Sets a default message if there are no abilities.
-        }
-    };
+    const classInfo = classesData[className];
+    const descElement = document.getElementById('classDescription');
+    const abilitiesElement = document.getElementById('classAbility');
+
+    // Clears previous content and updates the description. If there's no description for the class,
+    // it falls back to 'Select a class to see the description.'
+    descElement.value = classInfo?.description || 'Select a class to see the description.';
+
+    // Clears previous content and updates the abilities.
+    // If the class has abilities, it formats each ability as 'name: description' and joins them with new lines.
+    // If there are no abilities for the class, it falls back to 'Select a class to see the abilities.'
+    if (classInfo && classInfo.abilities) {
+        const abilitiesText = classInfo.abilities.map(ability => 
+            `${ability.name}: ${ability.ability_description}`
+        ).join('\n'); // Formats and combines the abilities into a single string, separated by new lines.
+        abilitiesElement.value = abilitiesText; // Updates the textarea with the formatted abilities.
+    } else {
+        abilitiesElement.value = 'Select a class to see the abilities.'; // Sets a default message if there are no abilities.
+    }
+};
 
     const initializeClassSelection = () => {
         const dropdown = document.getElementById('classDropdown');
