@@ -134,31 +134,26 @@ export const statRoller = (() => {
         const classInfo = classesData[className];
         const descElement = document.getElementById('classDescription');
         const abilitiesElement = document.getElementById('classAbility');
-    
-        // Clear existing content by setting their value to an empty string
+
+        // Always clear previous content
         descElement.value = '';
         abilitiesElement.value = '';
-    
-        // Check if classInfo exists to populate new data or set default messages
+
+        // Populate with new content or default messages
         if (classInfo) {
-            // Set class description
             descElement.value = classInfo.description;
-    
-            // Properly format and populate abilities data as plain text
-            let abilitiesText = classInfo.abilities.map(ability =>
-                `${ability.name}: ${ability.ability_description}${ability.formula ? '\nFormula: ' + ability.formula : ''}${ability.uses_per_combat ? '\nUses per combat: ' + ability.uses_per_combat : ''}\n`
-            ).join('\n');
-            abilitiesElement.value = abilitiesText;
+            abilitiesElement.value = classInfo.abilities.map(ability => 
+                `${ability.name}: ${ability.ability_description}\nFormula: ${ability.formula || 'N/A'}\nUses per combat: ${ability.uses_per_combat || 'N/A'}`
+            ).join('\n\n');
         } else {
-            // Set default messages if no class is selected or classInfo is missing
             descElement.value = 'Select a class to see the description.';
             abilitiesElement.value = 'Select a class to see the abilities.';
         }
     };
-    
+
     const initializeClassSelection = () => {
         const dropdown = document.getElementById('classDropdown');
-
+        dropdown.innerHTML = ''; // Clear existing options
         Object.keys(classesData).forEach(className => {
             const option = document.createElement('option');
             option.value = className;
@@ -170,8 +165,7 @@ export const statRoller = (() => {
             updateClassInfo(dropdown.value);
         });
 
-        // Initial update for the first selection
-        if (dropdown.value) updateClassInfo(dropdown.value);
+        if (dropdown.value) updateClassInfo(dropdown.value); // Update on initial script load if there's a value
     };
 
     const initialize = () => {
