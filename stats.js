@@ -130,17 +130,32 @@ export const statRoller = (() => {
 
         resetStatsAndShowButtons(); // Ensure a clean slate on page load
     };
-
     const updateClassInfo = (className) => {
         const classInfo = classesData[className];
         const descElement = document.getElementById('classDescription');
         const abilitiesElement = document.getElementById('classAbility');
-        descElement.textContent = ''; // Clear the description text
-        abilitiesElement.innerHTML = ''; // Clear the abilities text
-        descElement.textContent = classInfo?.description || 'Select a class to see the description.';
-        abilitiesElement.innerHTML = classInfo?.abilities.map(ability => `<li>${ability}</li>`).join('') || '<li>Select a class to see the abilities.</li>';
+    
+        // Clear existing content by setting their value to an empty string
+        descElement.value = '';
+        abilitiesElement.value = '';
+    
+        // Check if classInfo exists to populate new data or set default messages
+        if (classInfo) {
+            // Set class description
+            descElement.value = classInfo.description;
+    
+            // Properly format and populate abilities data as plain text
+            let abilitiesText = classInfo.abilities.map(ability =>
+                `${ability.name}: ${ability.ability_description}${ability.formula ? '\nFormula: ' + ability.formula : ''}${ability.uses_per_combat ? '\nUses per combat: ' + ability.uses_per_combat : ''}\n`
+            ).join('\n');
+            abilitiesElement.value = abilitiesText;
+        } else {
+            // Set default messages if no class is selected or classInfo is missing
+            descElement.value = 'Select a class to see the description.';
+            abilitiesElement.value = 'Select a class to see the abilities.';
+        }
     };
-
+    
     const initializeClassSelection = () => {
         const dropdown = document.getElementById('classDropdown');
 
